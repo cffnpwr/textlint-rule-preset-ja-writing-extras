@@ -1,0 +1,42 @@
+{
+  "name": "@cffnpwr/textlint-rule-no-dash",
+  "version": "0.1.0",
+  "description": "地の文・見出しでのダッシュの使用を検出するtextlintルール",
+  "homepage": "https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras",
+  "bugs": "https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras.git",
+    "directory": "packages/no-dash"
+  },
+  "license": "MIT",
+  "author": "cffnpwr",
+  "type": "module",
+  "keywords": ["textlintrule"],
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.cts",
+  "files": ["dist"],
+  "scripts": {
+    "test": "bun test src",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "textlint": ">=15.0.0"
+  },
+  "inlinedDependencies": {
+    "@textlint/ast-node-types": "15.7.1",
+    "@textlint/types": "15.7.1"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      },
+      "./package.json": "./package.json"
+    }
+  }
+}

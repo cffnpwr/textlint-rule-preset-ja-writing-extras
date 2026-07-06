@@ -1,0 +1,47 @@
+{
+  "name": "@cffnpwr/textlint-rule-sentence-per-line",
+  "version": "0.1.0",
+  "description": "1行に複数の文が含まれている状態を検出するtextlintルール",
+  "homepage": "https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras",
+  "bugs": "https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras.git",
+    "directory": "packages/sentence-per-line"
+  },
+  "license": "MIT",
+  "author": "cffnpwr",
+  "type": "module",
+  "keywords": ["textlintrule"],
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.cts",
+  "files": ["dist"],
+  "scripts": {
+    "test": "bun test src",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "sentence-splitter": "5.0.1",
+    "textlint-util-to-string": "3.3.4",
+    "unist-util-map": "4.0.0"
+  },
+  "peerDependencies": {
+    "textlint": ">=15.0.0"
+  },
+  "inlinedDependencies": {
+    "@textlint/ast-node-types": "15.7.1",
+    "@textlint/types": "15.7.1"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      },
+      "./package.json": "./package.json"
+    }
+  }
+}
