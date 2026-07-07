@@ -24,6 +24,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@cffnpwr/textlint-rule-no-arbitrary-line-break": "workspace:*",
     "@cffnpwr/textlint-rule-no-dash": "workspace:*",
     "@cffnpwr/textlint-rule-no-doubled-additive-conjunction": "workspace:*",
     "@cffnpwr/textlint-rule-sentence-per-line": "workspace:*"
