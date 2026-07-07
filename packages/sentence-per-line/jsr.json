@@ -1,0 +1,5 @@
+{
+  "name": "@cffnpwr/textlint-rule-sentence-per-line",
+  "version": "0.1.0",
+  "exports": "./src/index.ts"
+}

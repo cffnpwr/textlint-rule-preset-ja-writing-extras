@@ -24,9 +24,11 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "sentence-splitter": "5.0.1",
-    "textlint-util-to-string": "3.3.4",
-    "unist-util-map": "4.0.0"
+    "arktype": "2.2.2",
+    "sentence-splitter": "5.0.1"
+  },
+  "devDependencies": {
+    "@textlint/ast-node-types": "15.7.1"
   },
   "peerDependencies": {
     "textlint": ">=15.0.0"
