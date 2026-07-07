@@ -1,7 +1,7 @@
 {
   "name": "@cffnpwr/textlint-rule-no-dash",
   "version": "0.1.0",
-  "description": "地の文・見出しでのダッシュの使用を検出するtextlintルール",
+  "description": "地の文・見出し・テーブルセルでのダッシュの使用を検出するtextlintルール",
   "homepage": "https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras",
   "bugs": "https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/issues",
   "repository": {
@@ -22,6 +22,16 @@
   "scripts": {
     "test": "bun test src",
     "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@textlint/regexp-string-matcher": "2.0.2",
+    "arktype": "2.2.2",
+    "textlint-util-to-string": "3.3.4",
+    "ts-pattern": "5.9.0",
+    "unist-util-map": "4.0.0"
+  },
+  "devDependencies": {
+    "@textlint/ast-node-types": "15.7.1"
   },
   "peerDependencies": {
     "textlint": ">=15.0.0"

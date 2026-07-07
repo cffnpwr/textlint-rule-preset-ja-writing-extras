@@ -1,42 +1,182 @@
-import TextLintTester from "textlint-tester";
+import { describe, expect, it } from "bun:test";
+
+import { TextlintKernel } from "@textlint/kernel";
+import markdown from "@textlint/textlint-plugin-markdown";
+
+import type { Options } from "./index.ts";
 
 import rule from "./index.ts";
 
-const tester = new TextLintTester();
-tester.run("no-dash", rule, {
-  valid: [
-    "text",
-    {
-      text: "It is bugs, but it should be ignored",
-      options: {
-        allows: ["it should be ignored"],
-      },
-    },
-  ],
-  invalid: [
-    {
-      text: "It is bugs.",
-      errors: [
-        {
-          message: "Found bugs.",
-          range: [6, 10],
-        },
-      ],
-    },
-    {
-      text: `It has many bugs.
+const kernel = new TextlintKernel();
 
-One more bugs`,
-      errors: [
-        {
-          message: "Found bugs.",
-          range: [12, 16],
-        },
-        {
-          message: "Found bugs.",
-          range: [28, 32],
-        },
-      ],
-    },
-  ],
+// Given: オプションを固定し、When: テキストをlintした結果のメッセージを返す
+const lintWith = (options?: Options) => (text: string) => kernel
+  .lintText(text, {
+    ext: ".md",
+    filePath: "test.md",
+    plugins: [{ pluginId: "markdown", plugin: markdown }],
+    rules: [{ ruleId: "no-dash", rule, options }],
+  })
+  .then((result) => result.messages);
+
+describe("no-dash", () => {
+  describe("デフォルト設定のとき", () => {
+    const lint = lintWith();
+
+    it("[positive] ダッシュを含まない文を許容する", async () => {
+      const messages = await lint("普通の文です。");
+      expect(messages).toHaveLength(0);
+    });
+
+    it("[positive] 英語複合語のenダッシュを許容する", async () => {
+      const messages = await lint("Curry–Howard対応の話です。");
+      expect(messages).toHaveLength(0);
+    });
+
+    it("[positive] 数字間のenダッシュ（範囲表記）を許容する", async () => {
+      const messages = await lint("1–3月の予定です。");
+      expect(messages).toHaveLength(0);
+    });
+
+    it("[positive] インラインコード内のダッシュを許容する", async () => {
+      const messages = await lint("ダッシュは `—` のようにコードで書きます。");
+      expect(messages).toHaveLength(0);
+    });
+
+    it("[positive] コードブロック内のダッシュを許容する", async () => {
+      const messages = await lint("```\n— コードブロック内\n```");
+      expect(messages).toHaveLength(0);
+    });
+
+    it("[positive] 引用内のダッシュを許容する", async () => {
+      const messages = await lint("> 引用の—はそのままにします。");
+      expect(messages).toHaveLength(0);
+    });
+
+    it("[negative] emダッシュを検出し、位置とメッセージを報告する", async () => {
+      const messages = await lint("これは—強調—です。");
+      expect(messages).toHaveLength(2);
+      expect(messages[0]?.message).toBe(
+        "ダッシュ「—」が使われています。同格・補足の挿入は括弧（）に、言い換えは句点で二文に分けるか読点でつないでください。",
+      );
+      expect(messages[0]?.range).toEqual([3, 4]);
+      expect(messages[1]?.range).toEqual([6, 7]);
+    });
+
+    it("[negative] 二倍ダッシュを1つのエラーとして検出する", async () => {
+      const messages = await lint("考え——それは重要です。");
+      expect(messages).toHaveLength(1);
+      expect(messages[0]?.message).toContain("ダッシュ「——」");
+      expect(messages[0]?.range).toEqual([2, 4]);
+    });
+
+    it("[negative] horizontal barを検出する", async () => {
+      const messages = await lint("それ―つまり補足です。");
+      expect(messages).toHaveLength(1);
+      expect(messages[0]?.range).toEqual([2, 3]);
+    });
+
+    it("[negative] 和字に挟まれたenダッシュを検出する", async () => {
+      const messages = await lint("カリー–ハワード対応です。");
+      expect(messages).toHaveLength(1);
+      expect(messages[0]?.range).toEqual([3, 4]);
+    });
+
+    it("[negative] 強調マークアップ境界のenダッシュを本文の文字で判定して検出する", async () => {
+      const messages = await lint("日本語**強調**–続きです。");
+      expect(messages).toHaveLength(1);
+      expect(messages[0]?.range).toEqual([9, 10]);
+    });
+
+    it("[negative] 強調内のenダッシュをマークアップを除いたテキストで検出する", async () => {
+      const messages = await lint("**日本語–日本語**です。");
+      expect(messages).toHaveLength(1);
+      expect(messages[0]?.range).toEqual([5, 6]);
+    });
+
+    it("[negative] 見出し内のemダッシュを検出する", async () => {
+      const messages = await lint("# 見出しの—です");
+      expect(messages).toHaveLength(1);
+      expect(messages[0]?.range).toEqual([6, 7]);
+    });
+  });
+
+  describe("allowsで例外を指定したとき", () => {
+    const lint = lintWith({ allows: ["カリー–ハワード"] });
+
+    it("[positive] 例外パターンに一致するenダッシュを許容する", async () => {
+      const messages = await lint("カリー–ハワード対応です。");
+      expect(messages).toHaveLength(0);
+    });
+  });
+
+  describe("dashesでenダッシュを対象から外したとき", () => {
+    const lint = lintWith({ dashes: { emDash: "always", horizontalBar: "always" } });
+
+    it("[positive] 和字に挟まれたenダッシュを許容する", async () => {
+      const messages = await lint("カリー–ハワード対応です。");
+      expect(messages).toHaveLength(0);
+    });
+  });
+
+  describe("dashesでenダッシュのみを対象にしたとき", () => {
+    const lint = lintWith({ dashes: { enDash: "japanese-both" } });
+
+    it("[positive] 対象から外れたemダッシュを許容する", async () => {
+      const messages = await lint("これは—ダッシュ—です。");
+      expect(messages).toHaveLength(0);
+    });
+  });
+
+  describe("dashesでjapanese-eitherを指定したとき", () => {
+    const lint = lintWith({ dashes: { enDash: "japanese-either" } });
+
+    it("[positive] 両側が英字のenダッシュを許容する", async () => {
+      const messages = await lint("A–Bです。");
+      expect(messages).toHaveLength(0);
+    });
+
+    it("[negative] 片側が和字のenダッシュを検出する", async () => {
+      const messages = await lint("これは–です。");
+      expect(messages).toHaveLength(1);
+      expect(messages[0]?.range).toEqual([3, 4]);
+    });
+  });
+
+  describe("skipBlockQuoteを無効にしたとき", () => {
+    const lint = lintWith({ skipBlockQuote: false });
+
+    it("[negative] 引用内のダッシュを検出する", async () => {
+      const messages = await lint("> 引用の—も検査します。");
+      expect(messages).toHaveLength(1);
+      expect(messages[0]?.range).toEqual([5, 6]);
+    });
+  });
+
+  describe("不正なオプションを指定したとき", () => {
+    // .textlintrc由来の型付けされない入力を検査するため、JSON経由で不正な値を渡す。
+    // バリデーションはcontextに触れる前に走るため、contextはダミーでよい
+    const initWith = (optionsJson: string) => () => {
+      if (typeof rule !== "function") {
+        throw new TypeError("rule should be a reporter function");
+      }
+      rule(JSON.parse("{}"), JSON.parse(optionsJson));
+    };
+
+    it("[negative] 不明なオプションキーを拒否する", () => {
+      expect(initWith("{\"allow\": []}")).toThrow("allow must be removed");
+    });
+
+    it("[negative] dashesの不明なキーを拒否する", () => {
+      expect(initWith("{\"dashes\": {\"emdash\": \"always\"}}")).toThrow("dashes.emdash must be removed");
+    });
+
+    it("[negative] dashesの不正な値を拒否する", () => {
+      expect(initWith("{\"dashes\": {\"emDash\": \"sometimes\"}}")).toThrow("dashes.emDash must be");
+    });
+
+    it("[negative] skipBlockQuoteの型を検証する", () => {
+      expect(initWith("{\"skipBlockQuote\": \"yes\"}")).toThrow("skipBlockQuote must be boolean");
+    });
+  });
 });
