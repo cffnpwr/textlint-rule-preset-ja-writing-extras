@@ -1,0 +1,5 @@
+{
+  "name": "@cffnpwr/textlint-rule-no-arbitrary-line-break",
+  "version": "0.1.0",
+  "exports": "./src/index.ts"
+}

@@ -18,6 +18,19 @@
         "typescript": "6.0.3",
       },
     },
+    "packages/no-arbitrary-line-break": {
+      "name": "@cffnpwr/textlint-rule-no-arbitrary-line-break",
+      "version": "0.1.0",
+      "dependencies": {
+        "arktype": "2.2.2",
+      },
+      "devDependencies": {
+        "@textlint/ast-node-types": "15.7.1",
+      },
+      "peerDependencies": {
+        "textlint": ">=15.0.0",
+      },
+    },
     "packages/no-dash": {
       "name": "@cffnpwr/textlint-rule-no-dash",
       "version": "0.1.0",
@@ -121,6 +134,8 @@
     "@cacheable/utils": ["@cacheable/utils@2.5.0", "", { "dependencies": { "hashery": "^1.5.1", "keyv": "^5.6.0" } }, "sha512-buipgOVDkkPXNR5+xBpDw7Zk2n1EvU7qBJCNUcL7rhQ//kfpOXPAvQ511Os0vpLYJ1pZnvudNytkQt2hst3wqA=="],
 
     "@cffnpwr/eslint-config": ["@cffnpwr/eslint-config@1.2.0", "", { "dependencies": { "@eslint/js": "9.39.4", "@stylistic/eslint-plugin": "5.10.0", "eslint-plugin-better-tailwindcss": "4.3.2", "eslint-plugin-import": "2.32.0", "eslint-plugin-jsx-a11y": "6.10.2", "eslint-plugin-perfectionist": "5.6.0", "eslint-plugin-react": "7.37.5", "eslint-plugin-react-hooks": "7.0.1", "eslint-plugin-tailwindcss": "4.0.0-beta.0", "eslint-plugin-unused-imports": "4.4.1", "typescript-eslint": "8.57.0" }, "peerDependencies": { "eslint": ">=9.18.0", "typescript": ">=5.5.0" } }, "sha512-jtpBOKhIkC1iPQkRTGUii2VDfF+s9o/214If4ljDAEkcl0Q9JU5J1YubkMxCVXfog6h9nRpihmIsrFx3CMgy8g=="],
+
+    "@cffnpwr/textlint-rule-no-arbitrary-line-break": ["@cffnpwr/textlint-rule-no-arbitrary-line-break@workspace:packages/no-arbitrary-line-break"],
 
     "@cffnpwr/textlint-rule-no-dash": ["@cffnpwr/textlint-rule-no-dash@workspace:packages/no-dash"],
 
