@@ -1,0 +1,5 @@
+{
+  "name": "@cffnpwr/textlint-rule-no-doubled-additive-conjunction",
+  "version": "0.1.0",
+  "exports": "./src/index.ts"
+}
