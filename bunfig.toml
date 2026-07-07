@@ -1,3 +1,2 @@
 [test]
 pathIgnorePatterns = "**/dist/**"
-preload = ["./bun-test-setup.ts"]

@@ -21,7 +21,6 @@
     "@typescript-eslint/parser": "8.62.1",
     "eslint": "10.6.0",
     "globals": "17.7.0",
-    "textlint-tester": "15.7.1",
     "tsdown": "0.22.3",
     "typescript": "6.0.3"
   }
