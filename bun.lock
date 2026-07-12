@@ -75,6 +75,9 @@
         "@cffnpwr/textlint-rule-no-doubled-additive-conjunction": "workspace:*",
         "@cffnpwr/textlint-rule-sentence-per-line": "workspace:*",
       },
+      "devDependencies": {
+        "@textlint/types": "15.7.1",
+      },
     },
     "packages/sentence-per-line": {
       "name": "@cffnpwr/textlint-rule-sentence-per-line",
