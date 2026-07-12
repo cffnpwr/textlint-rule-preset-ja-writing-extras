@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.0.1](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/compare/textlint-rule-preset-ja-writing-extras-v1.0.0...textlint-rule-preset-ja-writing-extras-v1.0.1) (2026-07-12)
+
+
+### Bug Fixes
+
+* :bug: 各パッケージのバージョンを1.0.1に上げ公開失敗分を再リリースする ([#15](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/issues/15)) ([03ece5a](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/commit/03ece5a86bf2314065e2a098032bcfa743507922))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @cffnpwr/textlint-rule-no-arbitrary-line-break bumped to 1.0.1
+    * @cffnpwr/textlint-rule-no-dash bumped to 1.0.1
+    * @cffnpwr/textlint-rule-no-doubled-additive-conjunction bumped to 1.0.1
+    * @cffnpwr/textlint-rule-sentence-per-line bumped to 1.0.1
+
 ## 1.0.0 (2026-07-12)
 
 
