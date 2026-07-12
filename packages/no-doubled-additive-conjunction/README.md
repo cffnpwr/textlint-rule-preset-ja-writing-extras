@@ -1,9 +1,17 @@
 # @cffnpwr/textlint-rule-no-doubled-additive-conjunction
 
-同一段落内での累加の接続詞（「さらに」「また」「加えて」）の複数回使用を検出するtextlintルールです。
+[![GitHub License](https://img.shields.io/github/license/cffnpwr/textlint-rule-preset-ja-writing-extras?style=flat)](./LICENSE)
+[![npm Version](https://img.shields.io/npm/v/%40cffnpwr%2Ftextlint-rule-no-doubled-additive-conjunction?style=flat)](https://www.npmjs.com/package/@cffnpwr/textlint-rule-no-doubled-additive-conjunction)
+[![JSR Version](https://jsr.io/badges/@cffnpwr/textlint-rule-no-doubled-additive-conjunction)](https://jsr.io/@cffnpwr/textlint-rule-no-doubled-additive-conjunction)
 
-累加の接続詞の連打は、羅列を接続詞でつないだだけの構成になりがちです。
-語を言い換えても（「さらに」→「また」）連打であることは変わらないため、対象語をまとめてカウントします。
+A textlint rule that detects the use of additive conjunctions (「さらに」「また」「加えて」) more than
+once within the same paragraph.
+
+[日本語のREADMEはこちら](./README-ja.md)
+
+Repeatedly firing off additive conjunctions tends to produce a structure that merely strings a list
+together with conjunctions. Since paraphrasing the word (「さらに」→「また」) does not change the fact
+that they are being repeated, the target words are counted together as a group.
 
 ```markdown
 <!-- NG -->
@@ -16,19 +24,27 @@
 二つ目は〜です。
 ```
 
-接続詞としてカウントするのは、文頭に対象語＋読点「、」が現れる場合（「また、」「さらに、」「加えて、」）のみです。
-直後の区切りは全角の読点「、」に限り、半角カンマ「,」や読点なしの文頭は対象外です。これは`conjunctions`で対象語を差し替えた場合も同じで、差し替えた語も「語＋読点「、」」の形でのみカウントします。
-「またの機会」「また聞き」のような別語や、「性能をさらに高める」のような文中の副詞用法は対象外です。
-文頭の判定は強調などのマークアップを除いたテキストで行うため、`**また**、` のような文頭もカウントします。
-インラインコード・HTML・画像は文頭判定のテキストに含めません。
+A word is counted as a conjunction only when the target word appears at the beginning of a sentence
+followed by the full-width comma 「、」 (「また、」「さらに、」「加えて、」). The delimiter immediately
+after it is restricted to the full-width comma 「、」; a half-width comma 「,」 or a sentence beginning
+with no comma is out of scope. The same applies when the target words are swapped out via
+`conjunctions`: a swapped-in word is likewise counted only in the form of "word + comma 「、」".
+Different words such as 「またの機会」 or 「また聞き」, and adverbial uses within a sentence such as
+「性能をさらに高める」, are out of scope. Because the sentence-beginning check is performed on text with
+emphasis and other markup removed, a sentence beginning such as `**また**、` is also counted. Inline
+code, HTML, and images are not included in the text used for the sentence-beginning check.
 
-段落内で対象語の出現が合計2回以上になったとき、2回目以降のそれぞれを報告します。
-1回目の使用は正当な用法として報告しません。
+When the total number of occurrences of the target words within a paragraph reaches two or more,
+each occurrence from the second one onward is reported. The first use is not reported, as it is a
+legitimate usage.
 
-既存の[textlint-rule-no-doubled-conjunction](https://github.com/textlint-ja/textlint-rule-no-doubled-conjunction)は隣接する文での同一接続詞の反復を形態素解析で検出しますが、IPAdicでは「さらに」（副詞）「加えて」（動詞＋助詞）が接続詞と判定されないため、累加系の連打を扱えません。
-本ルールはその補完です。
+The existing
+[textlint-rule-no-doubled-conjunction](https://github.com/textlint-ja/textlint-rule-no-doubled-conjunction)
+detects repetition of the same conjunction across adjacent sentences via morphological analysis, but
+because IPAdic does not classify 「さらに」 (an adverb) or 「加えて」 (a verb + particle) as
+conjunctions, it cannot handle repeated use of the additive family. This rule complements it.
 
-## インストール
+## How to Install
 
 ### npm
 
@@ -90,9 +106,9 @@ or
 deno add --dev jsr:@cffnpwr/textlint-rule-no-doubled-additive-conjunction
 ```
 
-## 使い方
+## How to Use
 
-`.textlintrc.json`に追加します。
+Add it to `.textlintrc.json`.
 
 ```json
 {
@@ -102,7 +118,7 @@ deno add --dev jsr:@cffnpwr/textlint-rule-no-doubled-additive-conjunction
 }
 ```
 
-## オプション
+## Options
 
 ```ts
 interface Options {
@@ -111,12 +127,12 @@ interface Options {
 }
 ```
 
-| オプション | デフォルト | 説明 |
+| Option | Default | Description |
 | --- | --- | --- |
-| `conjunctions` | `["さらに", "また", "加えて"]` | カウント対象の語のリスト。指定した場合はデフォルトを上書きする |
-| `skipBlockQuote` | `true` | 引用（BlockQuote）配下を検査対象から外す |
+| `conjunctions` | `["さらに", "また", "加えて"]` | The list of words to count. When specified, it overrides the default |
+| `skipBlockQuote` | `true` | Excludes content under quotes (BlockQuote) from inspection |
 
-不明なオプションキーや不正な値を指定するとエラーになります。
+Specifying an unknown option key or an invalid value results in an error.
 
 ```json
 {
@@ -128,6 +144,6 @@ interface Options {
 }
 ```
 
-## ライセンス
+## License
 
 [MIT](./LICENSE)

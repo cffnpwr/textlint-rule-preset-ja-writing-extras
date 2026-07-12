@@ -4,22 +4,22 @@
 [![npm Version](https://img.shields.io/npm/v/%40cffnpwr%2Ftextlint-rule-preset-ja-writing-extras?style=flat)](https://www.npmjs.com/package/@cffnpwr/textlint-rule-preset-ja-writing-extras)
 [![JSR Version](https://jsr.io/badges/@cffnpwr/textlint-rule-preset-ja-writing-extras)](https://jsr.io/@cffnpwr/textlint-rule-preset-ja-writing-extras)
 
-A preset that bundles additional textlint rules for Japanese writing.
+日本語文章向けの追加textlintルールを束ねたプリセットです。
 
-[日本語のREADMEはこちら](./README-ja.md)
+[README.md for English is available here](./README.md).
 
-## Bundled Rules
+## 収録ルール
 
-| Rule | Detects | Default |
+| ルール | 検出内容 | デフォルト |
 | --- | --- | --- |
-| [no-dash](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/tree/main/packages/no-dash) | Use of dashes (`—` `―` `–`) in body text, headings, and table cells | Enabled |
-| [sentence-per-line](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/tree/main/packages/sentence-per-line) | Multiple sentences contained on a single line | Enabled |
-| [no-arbitrary-line-break](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/tree/main/packages/no-arbitrary-line-break) | Line breaks within a paragraph anywhere other than immediately after an allowed symbol | Enabled |
-| [no-doubled-additive-conjunction](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/tree/main/packages/no-doubled-additive-conjunction) | Multiple uses of additive conjunctions (さらに・また・加えて) within the same paragraph | Enabled |
+| [no-dash](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/tree/main/packages/no-dash) | 地の文・見出し・テーブルセルでのダッシュ（`—` `―` `–`）の使用 | 有効 |
+| [sentence-per-line](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/tree/main/packages/sentence-per-line) | 1行に複数の文が含まれている状態 | 有効 |
+| [no-arbitrary-line-break](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/tree/main/packages/no-arbitrary-line-break) | 許可された記号の直後以外での段落内の改行 | 有効 |
+| [no-doubled-additive-conjunction](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/tree/main/packages/no-doubled-additive-conjunction) | 同一段落内での累加の接続詞（さらに・また・加えて）の複数回使用 | 有効 |
 
-For details on each rule's detection conditions and options, see the respective README.
+各ルールの検出条件・オプションの詳細はそれぞれのREADMEを参照してください。
 
-## How to Install
+## インストール
 
 ### npm
 
@@ -81,9 +81,9 @@ or
 deno add --dev jsr:@cffnpwr/textlint-rule-preset-ja-writing-extras
 ```
 
-## How to Use
+## 使い方
 
-Add it to `.textlintrc.json`.
+`.textlintrc.json`に追加します。
 
 ```json
 {
@@ -93,7 +93,7 @@ Add it to `.textlintrc.json`.
 }
 ```
 
-You can also disable individual rules or specify options.
+ルール単位の無効化やオプション指定もできます。
 
 ```json
 {
@@ -108,6 +108,6 @@ You can also disable individual rules or specify options.
 }
 ```
 
-## License
+## ライセンス
 
 [MIT](./LICENSE)

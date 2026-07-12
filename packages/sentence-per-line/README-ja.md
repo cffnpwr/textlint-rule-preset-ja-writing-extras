@@ -4,12 +4,12 @@
 [![npm Version](https://img.shields.io/npm/v/%40cffnpwr%2Ftextlint-rule-sentence-per-line?style=flat)](https://www.npmjs.com/package/@cffnpwr/textlint-rule-sentence-per-line)
 [![JSR Version](https://jsr.io/badges/@cffnpwr/textlint-rule-sentence-per-line)](https://jsr.io/@cffnpwr/textlint-rule-sentence-per-line)
 
-A textlint rule that detects lines containing more than one sentence.
+1行に複数の文が含まれている状態を検出するtextlintルールです。
 
-[日本語のREADMEはこちら](./README-ja.md)
+[README.md for English is available here](./README.md).
 
-It enforces the style of "break the line after each sentence, and separate paragraphs with blank
-lines." The one-sentence-per-line format makes diffs sentence-scoped and easier to review.
+「一文ごとに改行し、段落は空行で区切る」という書き方を強制します。
+一文一行の形式は、diffが文単位になりレビューしやすくなります。
 
 ```markdown
 <!-- NG -->
@@ -20,17 +20,15 @@ lines." The one-sentence-per-line format makes diffs sentence-scoped and easier 
 二文目です。
 ```
 
-Sentence boundaries are determined by
-[sentence-splitter](https://github.com/textlint/sentence-splitter). It does not split on "。" inside
-quotation marks or parentheses, or on the period in abbreviations such as `Node.js`. A single
-sentence wrapped across multiple lines at a comma or similar is not a violation.
+文の境界は[sentence-splitter](https://github.com/textlint/sentence-splitter)で判定します。
+かぎ括弧・括弧内の「。」や`Node.js`のような略語のピリオドでは分割しません。
+読点などで折り返した1つの文が複数行にまたがることは違反になりません。
 
-Only paragraphs are inspected. Text inside list items is included, while headings, inline code, and
-code blocks are excluded.
+検査対象は段落のみで、リスト項目内のテキストは対象に含み、見出し、インラインコード、コードブロック内は対象外です。
 
-When a line has two or more sentences, each sentence from the second onward is reported.
+1行に2文以上ある場合、2文目以降のそれぞれを報告します。
 
-## How to Install
+## インストール
 
 ### npm
 
@@ -92,9 +90,9 @@ or
 deno add --dev jsr:@cffnpwr/textlint-rule-sentence-per-line
 ```
 
-## How to Use
+## 使い方
 
-Add it to `.textlintrc.json`.
+`.textlintrc.json`に追加します。
 
 ```json
 {
@@ -104,7 +102,7 @@ Add it to `.textlintrc.json`.
 }
 ```
 
-## Options
+## オプション
 
 ```ts
 interface Options {
@@ -112,12 +110,12 @@ interface Options {
 }
 ```
 
-| Option | Default | Description |
+| オプション | デフォルト | 説明 |
 | --- | --- | --- |
-| `skipBlockQuote` | `true` | Excludes content under quotes (BlockQuote) from inspection |
+| `skipBlockQuote` | `true` | 引用（BlockQuote）配下を検査対象から外す |
 
-Specifying an unknown option key or an invalid value results in an error.
+不明なオプションキーや不正な値を指定するとエラーになります。
 
-## License
+## ライセンス
 
 [MIT](./LICENSE)
