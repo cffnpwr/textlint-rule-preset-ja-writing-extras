@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@cffnpwr/textlint-rule-preset-ja-writing-extras-shared": "workspace:*",
-    "arktype": "2.2.2",
+    "arktype": "2.2.3",
     "sentence-splitter": "5.0.1"
   },
   "devDependencies": {
