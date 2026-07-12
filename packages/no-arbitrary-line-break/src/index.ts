@@ -10,7 +10,15 @@ const optionsSchema = type({
   "severity?": "unknown",
 });
 
-export type Options = Omit<typeof optionsSchema.infer, "severity">;
+export type Options = {
+  allowAfter?: string[];
+  skipBlockQuote?: boolean;
+};
+
+// optionsSchema（実行時バリデータ）と公開型Optionsの同期をコンパイル時に保証する
+type Expect<T extends true> = T;
+type Equals<A, B> = (<T>() => T extends A ? 1 : 2) extends (<T>() => T extends B ? 1 : 2) ? true : false;
+type _AssertOptions = Expect<Equals<Options, Omit<typeof optionsSchema.infer, "severity">>>;
 
 const defaultAllowAfter = [
   "、",

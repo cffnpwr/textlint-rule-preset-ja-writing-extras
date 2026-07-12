@@ -11,7 +11,14 @@ const optionsSchema = type({
   "severity?": "unknown",
 });
 
-export type Options = Omit<typeof optionsSchema.infer, "severity">;
+export type Options = {
+  skipBlockQuote?: boolean;
+};
+
+// optionsSchema（実行時バリデータ）と公開型Optionsの同期をコンパイル時に保証する
+type Expect<T extends true> = T;
+type Equals<A, B> = (<T>() => T extends A ? 1 : 2) extends (<T>() => T extends B ? 1 : 2) ? true : false;
+type _AssertOptions = Expect<Equals<Options, Omit<typeof optionsSchema.infer, "severity">>>;
 
 // sentence-splitter 5.0.1は@textlint/ast-node-types@13の型を要求するため、
 // textlint 15系のノードをそのまま渡せない（構造は互換）。
