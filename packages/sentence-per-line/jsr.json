@@ -1,6 +1,6 @@
 {
   "name": "@cffnpwr/textlint-rule-sentence-per-line",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "MIT",
   "exports": "./src/index.ts"
 }
