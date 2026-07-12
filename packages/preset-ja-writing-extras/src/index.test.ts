@@ -1,9 +1,8 @@
-import { describe, expect, it } from "bun:test";
-
 import type { TextlintKernelRule } from "@textlint/kernel";
 
 import { TextlintKernel } from "@textlint/kernel";
 import markdown from "@textlint/textlint-plugin-markdown";
+import { describe, expect, it } from "bun:test";
 
 import preset from "./index.ts";
 
