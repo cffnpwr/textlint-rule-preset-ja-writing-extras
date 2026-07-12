@@ -12,13 +12,18 @@
   "license": "MIT",
   "author": "cffnpwr",
   "type": "module",
-  "keywords": ["textlint"],
+  "keywords": [
+    "textlint"
+  ],
   "exports": {
     ".": "./src/index.ts",
     "./package.json": "./package.json"
   },
   "types": "./dist/index.d.cts",
-  "files": ["dist", "LICENSE"],
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
   "scripts": {
     "test": "bun test src",
     "typecheck": "tsc --noEmit"
