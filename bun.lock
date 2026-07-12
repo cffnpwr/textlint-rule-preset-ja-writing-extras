@@ -20,7 +20,7 @@
     },
     "packages/no-arbitrary-line-break": {
       "name": "@cffnpwr/textlint-rule-no-arbitrary-line-break",
-      "version": "1.0.2",
+      "version": "1.0.4",
       "dependencies": {
         "@cffnpwr/textlint-rule-preset-ja-writing-extras-shared": "workspace:*",
         "arktype": "2.2.3",
@@ -35,7 +35,7 @@
     },
     "packages/no-dash": {
       "name": "@cffnpwr/textlint-rule-no-dash",
-      "version": "1.0.2",
+      "version": "1.0.4",
       "dependencies": {
         "@cffnpwr/textlint-rule-preset-ja-writing-extras-shared": "workspace:*",
         "@textlint/regexp-string-matcher": "2.0.2",
@@ -52,7 +52,7 @@
     },
     "packages/no-doubled-additive-conjunction": {
       "name": "@cffnpwr/textlint-rule-no-doubled-additive-conjunction",
-      "version": "1.0.2",
+      "version": "1.0.4",
       "dependencies": {
         "@cffnpwr/textlint-rule-preset-ja-writing-extras-shared": "workspace:*",
         "arktype": "2.2.3",
@@ -68,7 +68,7 @@
     },
     "packages/preset-ja-writing-extras": {
       "name": "@cffnpwr/textlint-rule-preset-ja-writing-extras",
-      "version": "1.0.2",
+      "version": "1.0.4",
       "dependencies": {
         "@cffnpwr/textlint-rule-no-arbitrary-line-break": "workspace:*",
         "@cffnpwr/textlint-rule-no-dash": "workspace:*",
@@ -81,7 +81,7 @@
     },
     "packages/sentence-per-line": {
       "name": "@cffnpwr/textlint-rule-sentence-per-line",
-      "version": "1.0.2",
+      "version": "1.0.4",
       "dependencies": {
         "@cffnpwr/textlint-rule-preset-ja-writing-extras-shared": "workspace:*",
         "arktype": "2.2.3",
@@ -97,7 +97,7 @@
     },
     "packages/shared": {
       "name": "@cffnpwr/textlint-rule-preset-ja-writing-extras-shared",
-      "version": "1.0.2",
+      "version": "1.0.4",
       "dependencies": {
         "textlint-util-to-string": "3.3.4",
         "unist-util-map": "4.0.0",
