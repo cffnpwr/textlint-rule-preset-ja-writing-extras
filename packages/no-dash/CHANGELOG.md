@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.0.5](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/compare/textlint-rule-no-dash-v1.0.4...textlint-rule-no-dash-v1.0.5) (2026-07-12)
+
+
+### Bug Fixes
+
+* fix eslint warnings ([#30](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/issues/30)) ([4d69cda](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/commit/4d69cdacbb6af4174f34982f2b5d54e3072ffac8))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @cffnpwr/textlint-rule-preset-ja-writing-extras-shared bumped to 1.0.5
+
 ## [1.0.4](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/compare/textlint-rule-no-dash-v1.0.3...textlint-rule-no-dash-v1.0.4) (2026-07-12)
 
 

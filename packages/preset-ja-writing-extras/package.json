@@ -1,6 +1,6 @@
 {
   "name": "@cffnpwr/textlint-rule-preset-ja-writing-extras",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "textlintの日本語文章向けの追加ルールセット",
   "homepage": "https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras",
   "bugs": "https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/issues",
