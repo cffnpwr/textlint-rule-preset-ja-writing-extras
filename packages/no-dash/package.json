@@ -1,6 +1,6 @@
 {
   "name": "@cffnpwr/textlint-rule-no-dash",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "地の文・見出し・テーブルセルでのダッシュの使用を検出するtextlintルール",
   "homepage": "https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras",
   "bugs": "https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/issues",

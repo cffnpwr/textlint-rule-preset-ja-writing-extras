@@ -1,6 +1,6 @@
 {
   "name": "@cffnpwr/textlint-rule-no-arbitrary-line-break",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "許可された記号の直後以外での段落内の改行を検出するtextlintルール",
   "homepage": "https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras",
   "bugs": "https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/issues",
