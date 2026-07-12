@@ -1,18 +1,18 @@
 {
-  "name": "@cffnpwr/textlint-rule-no-dash",
+  "name": "@cffnpwr/textlint-rule-preset-ja-writing-extras-shared",
   "version": "0.1.0",
-  "description": "地の文・見出し・テーブルセルでのダッシュの使用を検出するtextlintルール",
+  "description": "textlint-rule-preset-ja-writing-extrasの各ルールが共有する内部ユーティリティ",
   "homepage": "https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras",
   "bugs": "https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/issues",
   "repository": {
     "type": "git",
     "url": "https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras.git",
-    "directory": "packages/no-dash"
+    "directory": "packages/shared"
   },
   "license": "MIT",
   "author": "cffnpwr",
   "type": "module",
-  "keywords": ["textlintrule"],
+  "keywords": ["textlint"],
   "exports": {
     ".": "./src/index.ts",
     "./package.json": "./package.json"
@@ -24,20 +24,13 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@cffnpwr/textlint-rule-preset-ja-writing-extras-shared": "workspace:*",
-    "@textlint/regexp-string-matcher": "2.0.2",
-    "arktype": "2.2.2",
-    "ts-pattern": "5.9.0"
+    "textlint-util-to-string": "3.3.4",
+    "unist-util-map": "4.0.0"
   },
   "devDependencies": {
-    "@textlint/ast-node-types": "15.7.1"
-  },
-  "peerDependencies": {
-    "textlint": ">=15.0.0"
-  },
-  "inlinedDependencies": {
-    "@textlint/ast-node-types": "15.7.1",
-    "@textlint/types": "15.7.1"
+    "@textlint/kernel": "15.7.1",
+    "@textlint/textlint-plugin-markdown": "15.7.1",
+    "arktype": "2.2.2"
   },
   "publishConfig": {
     "exports": {
