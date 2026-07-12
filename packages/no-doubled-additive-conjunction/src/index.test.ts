@@ -1,7 +1,6 @@
-import { describe, expect, it } from "bun:test";
-
 import { TextlintKernel } from "@textlint/kernel";
 import markdown from "@textlint/textlint-plugin-markdown";
+import { describe, expect, it } from "bun:test";
 
 import type { Options } from "./index.ts";
 
