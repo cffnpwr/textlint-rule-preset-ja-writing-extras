@@ -6,6 +6,7 @@
       "name": "@cffnpwr/textlint-rule-preset-ja-writing-extras-monorepo",
       "devDependencies": {
         "@cffnpwr/eslint-config": "1.2.0",
+        "@cffnpwr/tsconfig": "^1.0.0",
         "@textlint/kernel": "15.7.1",
         "@textlint/textlint-plugin-markdown": "15.7.1",
         "@textlint/types": "15.7.1",
@@ -144,6 +145,8 @@
     "@cffnpwr/textlint-rule-preset-ja-writing-extras": ["@cffnpwr/textlint-rule-preset-ja-writing-extras@workspace:packages/preset-ja-writing-extras"],
 
     "@cffnpwr/textlint-rule-sentence-per-line": ["@cffnpwr/textlint-rule-sentence-per-line@workspace:packages/sentence-per-line"],
+
+    "@cffnpwr/tsconfig": ["@cffnpwr/tsconfig@1.0.0", "", {}, "sha512-tZMQ89j0F8YqG97h0XwPcdZyOe8ipO6VfnrUIkwp7PYaNJ7xnu9wgSUr4qYbCbxWjNDJx2wpymh0vjaeYiCCKA=="],
 
     "@emnapi/core": ["@emnapi/core@1.11.1", "", { "dependencies": { "@emnapi/wasi-threads": "1.2.2", "tslib": "^2.4.0" } }, "sha512-RSvbQmHzdKzNsLYa/wHrbc3KN4sYLKAdPZxqiM2HATqv/SBk2/ENSHpvXGaLOMcsAyz0poEGqkmmKYG3OWiJEQ=="],
 
