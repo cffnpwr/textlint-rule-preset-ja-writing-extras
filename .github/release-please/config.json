@@ -4,21 +4,27 @@
   "plugins": ["node-workspace"],
   "packages": {
     "packages/shared": {
+      "release-as": "1.0.1",
       "extra-files": [{ "type": "json", "path": "jsr.json", "jsonpath": "$.version" }]
     },
     "packages/no-arbitrary-line-break": {
+      "release-as": "1.0.1",
       "extra-files": [{ "type": "json", "path": "jsr.json", "jsonpath": "$.version" }]
     },
     "packages/no-dash": {
+      "release-as": "1.0.1",
       "extra-files": [{ "type": "json", "path": "jsr.json", "jsonpath": "$.version" }]
     },
     "packages/no-doubled-additive-conjunction": {
+      "release-as": "1.0.1",
       "extra-files": [{ "type": "json", "path": "jsr.json", "jsonpath": "$.version" }]
     },
     "packages/sentence-per-line": {
+      "release-as": "1.0.1",
       "extra-files": [{ "type": "json", "path": "jsr.json", "jsonpath": "$.version" }]
     },
     "packages/preset-ja-writing-extras": {
+      "release-as": "1.0.1",
       "extra-files": [{ "type": "json", "path": "jsr.json", "jsonpath": "$.version" }]
     }
   }
