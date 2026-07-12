@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.0.3](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/compare/textlint-rule-no-dash-v1.0.2...textlint-rule-no-dash-v1.0.3) (2026-07-12)
+
+
+### Bug Fixes
+
+* :bug: presetのデフォルトエクスポートに型注釈を付けdts生成の非可搬参照を解消する ([#23](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/issues/23)) ([3a0af84](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/commit/3a0af8414b9052a36fe60c73694c75fa798ffd90))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @cffnpwr/textlint-rule-preset-ja-writing-extras-shared bumped to 1.0.3
+
 ## [1.0.2](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/compare/textlint-rule-no-dash-v1.0.1...textlint-rule-no-dash-v1.0.2) (2026-07-12)
 
 
