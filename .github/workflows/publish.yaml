@@ -79,6 +79,12 @@ jobs:
         with:
           working-directory: ${{ needs.detect-package.outputs.dir }}
 
+      - name: Apply publishConfig to manifest
+        working-directory: ${{ needs.detect-package.outputs.dir }}
+        run: |
+          jq '.exports = .publishConfig.exports | del(.publishConfig)' package.json > package.json.tmp
+          mv package.json.tmp package.json
+
       - name: Pack
         id: pack
         working-directory: ${{ needs.detect-package.outputs.dir }}
