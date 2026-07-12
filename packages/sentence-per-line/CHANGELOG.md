@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.0.2](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/compare/textlint-rule-sentence-per-line-v1.0.1...textlint-rule-sentence-per-line-v1.0.2) (2026-07-12)
+
+
+### Bug Fixes
+
+* :bug: @textlint/typesを各ルールのdevDependenciesに追加しJSR公開のドキュメント生成失敗を修正する ([#17](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/issues/17)) ([bb9aa3f](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/commit/bb9aa3f9eeda4ae4c52fe7b26c0dfdf74f5a9444))
+* **deps:** :package: update dependency arktype to v2.2.3 ([#19](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/issues/19)) ([b0205ea](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/commit/b0205ea6c5310eff29032d1308ea69de59e3d9a7))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @cffnpwr/textlint-rule-preset-ja-writing-extras-shared bumped to 1.0.2
+
 ## [1.0.1](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/compare/textlint-rule-sentence-per-line-v1.0.0...textlint-rule-sentence-per-line-v1.0.1) (2026-07-12)
 
 
