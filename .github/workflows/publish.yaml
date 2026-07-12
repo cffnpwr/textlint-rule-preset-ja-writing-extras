@@ -82,7 +82,7 @@ jobs:
       - name: Pack
         id: pack
         working-directory: ${{ needs.detect-package.outputs.dir }}
-        run: echo "tarball=$(bun pm pack --quiet)" >> "$GITHUB_OUTPUT"
+        run: echo "tarball=$(bun pm pack --quiet | tail -n1)" >> "$GITHUB_OUTPUT"
 
       - name: Publish to npm
         working-directory: ${{ needs.detect-package.outputs.dir }}
