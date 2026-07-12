@@ -1,8 +1,8 @@
 {
-  "packages/shared": "0.1.0",
-  "packages/no-arbitrary-line-break": "0.1.0",
-  "packages/no-dash": "0.1.0",
-  "packages/no-doubled-additive-conjunction": "0.1.0",
-  "packages/sentence-per-line": "0.1.0",
-  "packages/preset-ja-writing-extras": "0.1.0"
+  "packages/shared": "1.0.0",
+  "packages/no-arbitrary-line-break": "1.0.0",
+  "packages/no-dash": "1.0.0",
+  "packages/no-doubled-additive-conjunction": "1.0.0",
+  "packages/sentence-per-line": "1.0.0",
+  "packages/preset-ja-writing-extras": "1.0.0"
 }
