@@ -83,14 +83,15 @@ const rule: TextlintRuleModule<Options> = (context, options = {}) => {
           continue;
         }
         const wordStart = source.originalIndexFromIndex(leading);
-        const commaIndex = source.originalIndexFromIndex(leading + word.length);
-        if (wordStart === undefined || commaIndex === undefined) {
+        // 報告範囲は接続詞のみとし、直後の読点は含めない
+        const wordEnd = source.originalIndexFromIndex(leading + word.length);
+        if (wordStart === undefined || wordEnd === undefined) {
           continue;
         }
         const sentenceOffset = sentence.range[0] - base;
         found.push({
           start: sentenceOffset + wordStart,
-          end: sentenceOffset + commaIndex + 1,
+          end: sentenceOffset + wordEnd,
           word,
         });
       }

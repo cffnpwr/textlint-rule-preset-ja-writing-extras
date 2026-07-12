@@ -59,7 +59,7 @@ describe("no-doubled-additive-conjunction", () => {
       expect(messages[0]?.message).toBe(
         "累加の接続詞「また」が使われていますが、同じ段落内で既に「また」が使われています。接続詞を削るか、文や段落の構成を見直してください。",
       );
-      expect(messages[0]?.range).toEqual([10, 13]);
+      expect(messages[0]?.range).toEqual([10, 12]);
     });
 
     it("[negative] 異なる累加語の組み合わせも合算して報告する", async () => {
@@ -68,23 +68,23 @@ describe("no-doubled-additive-conjunction", () => {
       expect(messages[0]?.message).toBe(
         "累加の接続詞「また」が使われていますが、同じ段落内で既に「さらに」が使われています。接続詞を削るか、文や段落の構成を見直してください。",
       );
-      expect(messages[0]?.range).toEqual([11, 14]);
+      expect(messages[0]?.range).toEqual([11, 13]);
     });
 
     it("[negative] 3回使われた場合、2回目以降をそれぞれ報告する", async () => {
       const messages = await lint("また、一。\nさらに、二。\n加えて、三。");
       expect(messages).toHaveLength(2);
-      expect(messages[0]?.range).toEqual([6, 10]);
+      expect(messages[0]?.range).toEqual([6, 9]);
       expect(messages[1]?.message).toBe(
         "累加の接続詞「加えて」が使われていますが、同じ段落内で既に「また」・「さらに」が使われています。接続詞を削るか、文や段落の構成を見直してください。",
       );
-      expect(messages[1]?.range).toEqual([13, 17]);
+      expect(messages[1]?.range).toEqual([13, 16]);
     });
 
     it("[negative] 強調マークアップ付きの文頭もカウントする", async () => {
       const messages = await lint("**また**、一つ目です。\nまた、二つ目です。");
       expect(messages).toHaveLength(1);
-      expect(messages[0]?.range).toEqual([14, 17]);
+      expect(messages[0]?.range).toEqual([14, 16]);
     });
   });
 
@@ -103,7 +103,7 @@ describe("no-doubled-additive-conjunction", () => {
     it("[negative] 指定した語の2回目を報告する", async () => {
       const messages = await lint("しかし、一。しかし、二。");
       expect(messages).toHaveLength(1);
-      expect(messages[0]?.range).toEqual([6, 10]);
+      expect(messages[0]?.range).toEqual([6, 9]);
     });
   });
 
@@ -113,7 +113,7 @@ describe("no-doubled-additive-conjunction", () => {
     it("[negative] 引用内の2回目を報告する", async () => {
       const messages = await lint("> また、一。また、二。");
       expect(messages).toHaveLength(1);
-      expect(messages[0]?.range).toEqual([7, 10]);
+      expect(messages[0]?.range).toEqual([7, 9]);
     });
   });
 
