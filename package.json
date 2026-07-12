@@ -13,7 +13,7 @@
     "lint:fix": "eslint --fix ."
   },
   "devDependencies": {
-    "@cffnpwr/eslint-config": "1.2.0",
+    "@cffnpwr/eslint-config": "2.0.0",
     "@textlint/types": "15.7.1",
     "@types/bun": "1.3.14",
     "@typescript-eslint/parser": "8.62.1",
