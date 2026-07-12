@@ -1,9 +1,16 @@
 # @cffnpwr/textlint-rule-no-dash
 
-地の文・見出し・テーブルセルでのダッシュ（`—` `―` `–`）の使用を検出するtextlintルールです。
+[![GitHub License](https://img.shields.io/github/license/cffnpwr/textlint-rule-preset-ja-writing-extras?style=flat)](./LICENSE)
+[![npm Version](https://img.shields.io/npm/v/%40cffnpwr%2Ftextlint-rule-no-dash?style=flat)](https://www.npmjs.com/package/@cffnpwr/textlint-rule-no-dash)
+[![JSR Version](https://jsr.io/badges/@cffnpwr/textlint-rule-no-dash)](https://jsr.io/@cffnpwr/textlint-rule-no-dash)
 
-ダッシュによる同格・補足の挿入（`A——挿入——B`）は括弧（）に、
-言い換え（`A——B`）は句点で二文に分けるか読点でつなぐ書き方を促します。
+A textlint rule that detects the use of dashes (`—` `―` `–`) in body text, headings, and table cells.
+
+[日本語のREADMEはこちら](./README-ja.md)
+
+It encourages rewriting appositive or supplementary insertions with dashes (`A——挿入——B`) using
+parentheses（）, and rephrasings (`A——B`) either by splitting them into two sentences with a full
+stop or by joining them with a comma.
 
 ```markdown
 <!-- NG -->
@@ -15,16 +22,21 @@
 結論は明快です。シンプルが最善です。
 ```
 
-enダッシュ（`–` U+2013）は、デフォルトでは両側が和字（ひらがな・カタカナ・漢字・ー・々）の場合のみ検出します。
-`Curry–Howard`のような英語複合語や`1–3月`のような範囲表記は検出しません。
+By default, the en dash (`–` U+2013) is detected only when both sides are Japanese characters
+(hiragana, katakana, kanji, ー, 々). English compounds such as `Curry–Howard` and range notations
+such as `1–3月` are not detected.
 
-判定は強調・リンクなどのマークアップを除いた本文テキスト上で行います。
-`**強調**–続き`のようにダッシュがマークアップ境界にある場合も、前後の本文の文字（この例では「調」と「続」）で検出条件を判定します。
-インラインコード・コードブロック・HTMLタグ・画像・オートリンク（`<https://…>`）のURLは、内部のダッシュを検出しません。これらは同じ長さのダミー文字に置き換えて判定するため、隣接するダッシュの和字判定では和字でない文字として扱われます（例: `カリー–`code`です。` の enダッシュは、直後がインラインコードのため検出されません）。
-`[表示テキスト](URL)`形式のリンクは、表示テキストを検出対象とし、URLは対象にしません。
-連続するダッシュ（`——`等）は1つのエラーとして報告します。
+Detection is performed on the body text with markup such as emphasis and links removed. Even when a
+dash sits on a markup boundary, as in `**強調**–続き`, the detection condition is judged by the
+surrounding body characters (「調」 and 「続」 in this example). Inline code, code blocks, HTML tags,
+images, and autolink (`<https://…>`) URLs do not have their internal dashes detected. These are
+replaced with dummy characters of the same length for the judgment, so in the Japanese-character
+check for adjacent dashes they are treated as non-Japanese characters (for example, the en dash in
+`カリー–`code`です。` is not detected because inline code immediately follows it).
+Links in the `[表示テキスト](URL)` form target the display text for detection, not the URL.
+Consecutive dashes (such as `——`) are reported as a single error.
 
-## インストール
+## How to Install
 
 ### npm
 
@@ -86,9 +98,9 @@ or
 deno add --dev jsr:@cffnpwr/textlint-rule-no-dash
 ```
 
-## 使い方
+## How to Use
 
-`.textlintrc.json`に追加します。
+Add it to `.textlintrc.json`.
 
 ```json
 {
@@ -98,7 +110,7 @@ deno add --dev jsr:@cffnpwr/textlint-rule-no-dash
 }
 ```
 
-## オプション
+## Options
 
 ```ts
 type DashContext = "always" | "japanese-both" | "japanese-either";
@@ -110,30 +122,30 @@ interface Options {
 }
 ```
 
-| オプション | デフォルト | 説明 |
+| Option | Default | Description |
 | --- | --- | --- |
-| `allows` | `[]` | 検出を除外する文字列・パターンのリスト。[regexp-string-matcher](https://github.com/textlint/regexp-string-matcher)形式で、`"/pattern/"`による正規表現指定も可能。マッチ範囲と重なる検出はスキップされる |
-| `dashes` | 下記 | 検出するダッシュと検出条件のマップ。指定した場合はデフォルト全体を上書きする（キー単位でマージしない） |
-| `skipBlockQuote` | `true` | 引用（BlockQuote）配下を検査対象から外す |
+| `allows` | `[]` | A list of strings or patterns to exclude from detection. In the [regexp-string-matcher](https://github.com/textlint/regexp-string-matcher) format, regular expressions can also be specified via `"/pattern/"`. Detections overlapping a matched range are skipped |
+| `dashes` | see below | A map of dashes to detect and their detection conditions. When specified, it overrides the entire default (it is not merged per key) |
+| `skipBlockQuote` | `true` | Excludes content under quotes (BlockQuote) from inspection |
 
-`dashes`のキーと対応する文字は次の通りです。
+The keys of `dashes` and their corresponding characters are as follows.
 
-| キー | 文字 | デフォルトの検出条件 |
+| Key | Character | Default detection condition |
 | --- | --- | --- |
 | `emDash` | `—` U+2014 | `always` |
 | `horizontalBar` | `―` U+2015 | `always` |
 | `enDash` | `–` U+2013 | `japanese-both` |
 
-検出条件（`DashContext`）の意味は次の通りです。
+The meanings of the detection conditions (`DashContext`) are as follows.
 
-| 値 | 意味 |
+| Value | Meaning |
 | --- | --- |
-| `always` | 無条件に検出する |
-| `japanese-both` | 直前・直後の両方が和字のときのみ検出する |
-| `japanese-either` | 直前・直後の少なくとも片方が和字のときのみ検出する |
+| `always` | Detects unconditionally |
+| `japanese-both` | Detects only when both the preceding and following characters are Japanese |
+| `japanese-either` | Detects only when at least one of the preceding and following characters is Japanese |
 
-和字はひらがな・カタカナ・漢字・長音符「ー」・「々」を指します。
-不明なオプションキーや不正な値を指定するとエラーになります。
+Japanese characters refers to hiragana, katakana, kanji, the prolonged sound mark 「ー」, and 「々」.
+Specifying an unknown option key or an invalid value results in an error.
 
 ```json
 {
@@ -149,6 +161,6 @@ interface Options {
 }
 ```
 
-## ライセンス
+## License
 
 [MIT](./LICENSE)
