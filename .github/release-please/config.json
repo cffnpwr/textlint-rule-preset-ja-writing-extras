@@ -3,11 +3,23 @@
   "release-type": "node",
   "plugins": ["node-workspace"],
   "packages": {
-    "packages/shared": {},
-    "packages/no-arbitrary-line-break": {},
-    "packages/no-dash": {},
-    "packages/no-doubled-additive-conjunction": {},
-    "packages/sentence-per-line": {},
-    "packages/preset-ja-writing-extras": {}
+    "packages/shared": {
+      "extra-files": [{ "type": "json", "path": "jsr.json", "jsonpath": "$.version" }]
+    },
+    "packages/no-arbitrary-line-break": {
+      "extra-files": [{ "type": "json", "path": "jsr.json", "jsonpath": "$.version" }]
+    },
+    "packages/no-dash": {
+      "extra-files": [{ "type": "json", "path": "jsr.json", "jsonpath": "$.version" }]
+    },
+    "packages/no-doubled-additive-conjunction": {
+      "extra-files": [{ "type": "json", "path": "jsr.json", "jsonpath": "$.version" }]
+    },
+    "packages/sentence-per-line": {
+      "extra-files": [{ "type": "json", "path": "jsr.json", "jsonpath": "$.version" }]
+    },
+    "packages/preset-ja-writing-extras": {
+      "extra-files": [{ "type": "json", "path": "jsr.json", "jsonpath": "$.version" }]
+    }
   }
 }
