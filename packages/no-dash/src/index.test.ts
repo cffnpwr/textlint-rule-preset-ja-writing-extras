@@ -99,6 +99,35 @@ describe("no-dash", () => {
       expect(messages).toHaveLength(1);
       expect(messages[0]?.range).toEqual([6, 7]);
     });
+
+    it("[negative] テーブルセル内のemダッシュを検出する", async () => {
+      const messages = await lint("| 見出し |\n| --- |\n| セル—補足 |");
+      expect(messages).toHaveLength(1);
+      expect(messages[0]?.message).toContain("ダッシュ「—」");
+    });
+
+    it("[negative] サロゲートペア（拡張漢字）に挟まれたenダッシュを検出する", async () => {
+      const messages = await lint("𠮟る–𠮟るの話です。");
+      expect(messages).toHaveLength(1);
+      expect(messages[0]?.range).toEqual([3, 4]);
+    });
+
+    it("[positive] オートリンクのURL内のダッシュを許容する", async () => {
+      const messages = await lint("詳細は<https://example.com/a—b>を見てください。");
+      expect(messages).toHaveLength(0);
+    });
+
+    it("[negative] リンクの表示テキスト内のダッシュは検出する", async () => {
+      const messages = await lint("詳細は[表示—テキスト](https://example.com/x)です。");
+      expect(messages).toHaveLength(1);
+      expect(messages[0]?.range).toEqual([6, 7]);
+    });
+
+    it("[negative] CRLF改行を含む段落でも位置を保って検出する", async () => {
+      const messages = await lint("一行目です。\r\nこれは—補足です。");
+      expect(messages).toHaveLength(1);
+      expect(messages[0]?.message).toContain("ダッシュ「—」");
+    });
   });
 
   describe("allowsで例外を指定したとき", () => {
@@ -107,6 +136,20 @@ describe("no-dash", () => {
     it("[positive] 例外パターンに一致するenダッシュを許容する", async () => {
       const messages = await lint("カリー–ハワード対応です。");
       expect(messages).toHaveLength(0);
+    });
+  });
+
+  describe("allowsに正規表現形式を指定したとき", () => {
+    const lint = lintWith({ allows: ["/[ぁ-ん]+—[ぁ-ん]+/"] });
+
+    it("[positive] 正規表現に一致するダッシュを許容する", async () => {
+      const messages = await lint("これ—ここは許容です。");
+      expect(messages).toHaveLength(0);
+    });
+
+    it("[negative] 正規表現に一致しないダッシュは検出する", async () => {
+      const messages = await lint("漢字—漢字は検出です。");
+      expect(messages).toHaveLength(1);
     });
   });
 
@@ -164,19 +207,24 @@ describe("no-dash", () => {
     };
 
     it("[negative] 不明なオプションキーを拒否する", () => {
-      expect(initWith("{\"allow\": []}")).toThrow("allow must be removed");
+      expect(initWith("{\"allow\": []}")).toThrow("「allow」");
     });
 
     it("[negative] dashesの不明なキーを拒否する", () => {
-      expect(initWith("{\"dashes\": {\"emdash\": \"always\"}}")).toThrow("dashes.emdash must be removed");
+      expect(initWith("{\"dashes\": {\"emdash\": \"always\"}}")).toThrow("「dashes.emdash」");
     });
 
     it("[negative] dashesの不正な値を拒否する", () => {
-      expect(initWith("{\"dashes\": {\"emDash\": \"sometimes\"}}")).toThrow("dashes.emDash must be");
+      expect(initWith("{\"dashes\": {\"emDash\": \"sometimes\"}}")).toThrow("「dashes.emDash」");
     });
 
     it("[negative] skipBlockQuoteの型を検証する", () => {
-      expect(initWith("{\"skipBlockQuote\": \"yes\"}")).toThrow("skipBlockQuote must be boolean");
+      expect(initWith("{\"skipBlockQuote\": \"yes\"}")).toThrow("「skipBlockQuote」");
+    });
+
+    it("[negative] オブジェクト以外の値を拒否する", () => {
+      expect(initWith("\"invalid\"")).toThrow("オプションが不正です。オブジェクトで指定してください。");
+      expect(initWith("42")).toThrow("オブジェクトで指定してください");
     });
   });
 });

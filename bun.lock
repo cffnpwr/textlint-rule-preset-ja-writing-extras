@@ -6,7 +6,7 @@
       "name": "@cffnpwr/textlint-rule-preset-ja-writing-extras-monorepo",
       "devDependencies": {
         "@cffnpwr/eslint-config": "1.2.0",
-        "@cffnpwr/tsconfig": "^1.0.0",
+        "@cffnpwr/tsconfig": "1.0.0",
         "@textlint/kernel": "15.7.1",
         "@textlint/textlint-plugin-markdown": "15.7.1",
         "@textlint/types": "15.7.1",
@@ -22,6 +22,7 @@
       "name": "@cffnpwr/textlint-rule-no-arbitrary-line-break",
       "version": "0.1.0",
       "dependencies": {
+        "@cffnpwr/textlint-rule-preset-ja-writing-extras-shared": "workspace:*",
         "arktype": "2.2.2",
       },
       "devDependencies": {
@@ -35,11 +36,10 @@
       "name": "@cffnpwr/textlint-rule-no-dash",
       "version": "0.1.0",
       "dependencies": {
+        "@cffnpwr/textlint-rule-preset-ja-writing-extras-shared": "workspace:*",
         "@textlint/regexp-string-matcher": "2.0.2",
         "arktype": "2.2.2",
-        "textlint-util-to-string": "3.3.4",
         "ts-pattern": "5.9.0",
-        "unist-util-map": "4.0.0",
       },
       "devDependencies": {
         "@textlint/ast-node-types": "15.7.1",
@@ -52,10 +52,9 @@
       "name": "@cffnpwr/textlint-rule-no-doubled-additive-conjunction",
       "version": "0.1.0",
       "dependencies": {
+        "@cffnpwr/textlint-rule-preset-ja-writing-extras-shared": "workspace:*",
         "arktype": "2.2.2",
         "sentence-splitter": "5.0.1",
-        "textlint-util-to-string": "3.3.4",
-        "unist-util-map": "4.0.0",
       },
       "devDependencies": {
         "@textlint/ast-node-types": "15.7.1",
@@ -78,6 +77,7 @@
       "name": "@cffnpwr/textlint-rule-sentence-per-line",
       "version": "0.1.0",
       "dependencies": {
+        "@cffnpwr/textlint-rule-preset-ja-writing-extras-shared": "workspace:*",
         "arktype": "2.2.2",
         "sentence-splitter": "5.0.1",
       },
@@ -86,6 +86,19 @@
       },
       "peerDependencies": {
         "textlint": ">=15.0.0",
+      },
+    },
+    "packages/shared": {
+      "name": "@cffnpwr/textlint-rule-preset-ja-writing-extras-shared",
+      "version": "0.1.0",
+      "dependencies": {
+        "textlint-util-to-string": "3.3.4",
+        "unist-util-map": "4.0.0",
+      },
+      "devDependencies": {
+        "@textlint/kernel": "15.7.1",
+        "@textlint/textlint-plugin-markdown": "15.7.1",
+        "arktype": "2.2.2",
       },
     },
   },
@@ -143,6 +156,8 @@
     "@cffnpwr/textlint-rule-no-doubled-additive-conjunction": ["@cffnpwr/textlint-rule-no-doubled-additive-conjunction@workspace:packages/no-doubled-additive-conjunction"],
 
     "@cffnpwr/textlint-rule-preset-ja-writing-extras": ["@cffnpwr/textlint-rule-preset-ja-writing-extras@workspace:packages/preset-ja-writing-extras"],
+
+    "@cffnpwr/textlint-rule-preset-ja-writing-extras-shared": ["@cffnpwr/textlint-rule-preset-ja-writing-extras-shared@workspace:packages/shared"],
 
     "@cffnpwr/textlint-rule-sentence-per-line": ["@cffnpwr/textlint-rule-sentence-per-line@workspace:packages/sentence-per-line"],
 

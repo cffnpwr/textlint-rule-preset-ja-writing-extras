@@ -47,4 +47,24 @@ describe("preset-ja-writing-extras", () => {
       "sentence-per-line",
     ]);
   });
+
+  it("[negative] 単一ルールの違反を、件数・位置・ルールを特定して報告する", async () => {
+    const messages = await lint("これは——ダッシュです。");
+    expect(messages).toHaveLength(1);
+    expect(messages[0]?.ruleId).toBe("no-dash");
+    expect(messages[0]?.range).toEqual([3, 5]);
+  });
+
+  it("[positive] ルール単位で無効化した違反は報告しない", async () => {
+    const rulesWithoutDash = presetRules.map((rule) => (rule.ruleId === "no-dash" ? { ...rule, options: false } : rule));
+    const messages = await kernel
+      .lintText("これは——ダッシュです。", {
+        ext: ".md",
+        filePath: "test.md",
+        plugins: [{ pluginId: "markdown", plugin: markdown }],
+        rules: rulesWithoutDash,
+      })
+      .then((result) => result.messages);
+    expect(messages).toHaveLength(0);
+  });
 });

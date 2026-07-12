@@ -128,15 +128,20 @@ describe("no-doubled-additive-conjunction", () => {
     };
 
     it("[negative] 不明なオプションキーを拒否する", () => {
-      expect(initWith("{\"conjunction\": []}")).toThrow("conjunction must be removed");
+      expect(initWith("{\"conjunction\": []}")).toThrow("「conjunction」");
     });
 
     it("[negative] conjunctionsの型を検証する", () => {
-      expect(initWith("{\"conjunctions\": \"また\"}")).toThrow("conjunctions must be an array");
+      expect(initWith("{\"conjunctions\": \"また\"}")).toThrow("「conjunctions」");
     });
 
     it("[negative] skipBlockQuoteの型を検証する", () => {
-      expect(initWith("{\"skipBlockQuote\": \"true\"}")).toThrow("skipBlockQuote must be boolean");
+      expect(initWith("{\"skipBlockQuote\": \"true\"}")).toThrow("「skipBlockQuote」");
+    });
+
+    it("[negative] オブジェクト以外の値を拒否する", () => {
+      expect(initWith("\"invalid\"")).toThrow("オプションが不正です。オブジェクトで指定してください。");
+      expect(initWith("42")).toThrow("オブジェクトで指定してください");
     });
   });
 });

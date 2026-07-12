@@ -115,6 +115,16 @@ describe("no-arbitrary-line-break", () => {
       expect(messages[0]?.range).toEqual([6, 7]);
       expect(messages[1]?.range).toEqual([14, 15]);
     });
+
+    it("[negative] CRLF改行でも文の途中の改行を報告する", async () => {
+      const messages = await lint("途中で\r\n改行します。");
+      expect(messages).toHaveLength(1);
+    });
+
+    it("[positive] CRLF改行でも許可記号の直後は許容する", async () => {
+      const messages = await lint("一文目です。\r\n二文目です。");
+      expect(messages).toHaveLength(0);
+    });
   });
 
   describe("allowAfterを差し替えたとき", () => {
@@ -164,19 +174,24 @@ describe("no-arbitrary-line-break", () => {
     };
 
     it("[negative] 不明なオプションキーを拒否する", () => {
-      expect(initWith("{\"allowsAfter\": []}")).toThrow("allowsAfter must be removed");
+      expect(initWith("{\"allowsAfter\": []}")).toThrow("「allowsAfter」");
     });
 
     it("[negative] allowAfterの型を検証する", () => {
-      expect(initWith("{\"allowAfter\": \"、\"}")).toThrow("allowAfter must be an array");
+      expect(initWith("{\"allowAfter\": \"、\"}")).toThrow("「allowAfter」");
     });
 
     it("[negative] allowAfterの2文字以上の要素を拒否する", () => {
-      expect(initWith("{\"allowAfter\": [\"、\", \"。」\"]}")).toThrow("must be exactly length 1");
+      expect(initWith("{\"allowAfter\": [\"、\", \"。」\"]}")).toThrow("「allowAfter.1」");
     });
 
     it("[negative] skipBlockQuoteの型を検証する", () => {
-      expect(initWith("{\"skipBlockQuote\": 1}")).toThrow("skipBlockQuote must be boolean");
+      expect(initWith("{\"skipBlockQuote\": 1}")).toThrow("「skipBlockQuote」");
+    });
+
+    it("[negative] オブジェクト以外の値を拒否する", () => {
+      expect(initWith("\"invalid\"")).toThrow("オプションが不正です。オブジェクトで指定してください。");
+      expect(initWith("42")).toThrow("オブジェクトで指定してください");
     });
   });
 });

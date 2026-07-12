@@ -1,5 +1,6 @@
 import type { TextlintRuleModule } from "@textlint/types";
 
+import { createBlockQuoteDepth, validateOptions } from "@cffnpwr/textlint-rule-preset-ja-writing-extras-shared";
 import { type } from "arktype";
 
 const optionsSchema = type({
@@ -29,18 +30,8 @@ const defaultAllowAfter = [
   "]",
 ];
 
-const validateOptions = (options: unknown) => {
-  if (typeof options !== "object" || options === null) {
-    return;
-  }
-  const result = optionsSchema(options);
-  if (result instanceof type.errors) {
-    throw new TypeError(`オプションが不正です: ${result.summary}`);
-  }
-};
-
 const rule: TextlintRuleModule<Options> = (context, options = {}) => {
-  validateOptions(options);
+  validateOptions(optionsSchema, options);
   const { Syntax, RuleError, report, getSource, locator } = context;
   const allowAfterList = options.allowAfter ?? defaultAllowAfter;
   const allowAfter = new Set(allowAfterList);
@@ -50,16 +41,12 @@ const rule: TextlintRuleModule<Options> = (context, options = {}) => {
       .map((char) => `「${char}」`)
       .join("・")}の直後でのみ行ってください。`
     : "文の途中で改行しています。改行は許可されていません。";
-  let blockQuoteDepth = 0;
+  const blockQuote = createBlockQuoteDepth();
   return {
-    [Syntax.BlockQuote]() {
-      blockQuoteDepth += 1;
-    },
-    [Syntax.BlockQuoteExit]() {
-      blockQuoteDepth -= 1;
-    },
+    [Syntax.BlockQuote]: blockQuote.enter,
+    [Syntax.BlockQuoteExit]: blockQuote.exit,
     [Syntax.Paragraph](node) {
-      if (skipBlockQuote && blockQuoteDepth > 0) {
+      if (skipBlockQuote && blockQuote.isInside()) {
         return;
       }
       const base = node.range[0];

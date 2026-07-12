@@ -1,11 +1,10 @@
 import type { TxtHeaderNode, TxtParagraphNode, TxtTableCellNode } from "@textlint/ast-node-types";
 import type { TextlintRuleModule } from "@textlint/types";
 
+import { createBlockQuoteDepth, maskValue, toMaskedStringSource, validateOptions } from "@cffnpwr/textlint-rule-preset-ja-writing-extras-shared";
 import { matchPatterns } from "@textlint/regexp-string-matcher";
 import { type } from "arktype";
-import { StringSource } from "textlint-util-to-string";
 import { match } from "ts-pattern";
-import { map } from "unist-util-map";
 
 const dashContextSchema = type("'always' | 'japanese-both' | 'japanese-either'");
 
@@ -42,16 +41,6 @@ const defaultDashes: Partial<Record<DashKind, DashContext>> = {
   enDash: "japanese-both",
 };
 
-const validateOptions = (options: unknown) => {
-  if (typeof options !== "object" || options === null) {
-    return;
-  }
-  const result = optionsSchema(options);
-  if (result instanceof type.errors) {
-    throw new TypeError(`オプションが不正です: ${result.summary}`);
-  }
-};
-
 // U+30FC: 長音符（Script=CommonのためScript指定では拾えない）
 const japaneseCharPattern = /[\p{sc=Hiragana}\p{sc=Katakana}\p{sc=Han}\u30FC々]/u;
 
@@ -83,11 +72,6 @@ const codePointBefore = (text: string, index: number): string | undefined => {
 
 type SourceTargetNode = TxtHeaderNode | TxtParagraphNode | TxtTableCellNode;
 
-// 本文テキスト化の際に同一長のダミー文字列へ置き換え、隣接判定から隔離するノード型
-const maskedNodeTypes = new Set(["Code", "Html", "Image"]);
-
-const maskValue = (length: number): string => "x".repeat(Math.max(length, 1));
-
 // autolink（<https://…>）はStr子にURL文字列がそのまま入るため、表示テキストがURLそのものの
 // Linkを判定してURLを本文から隔離する。通常リンク（表示テキスト≠URL）の表示テキストは対象に残す
 const isAutolinkParent = (parent: { type: string; [key: string]: unknown; } | null | undefined): boolean => {
@@ -105,30 +89,16 @@ const isAutolinkParent = (parent: { type: string; [key: string]: unknown; } | nu
   return childText === parent.url;
 };
 
-// unist-util-mapとtextlint-util-to-string 3.3.4はtextlint 15系と異なる型定義
-// （unist・@textlint/ast-node-types@13）を要求するため、そのままでは渡せない（構造は互換）。
-// 外部ライブラリとの境界に限りアサーションで変換する。
-const toMaskedStringSource = (node: SourceTargetNode): StringSource => {
-  const masked = map(node as unknown as Parameters<typeof map>[0], (child, _index, parent) => {
-    if (maskedNodeTypes.has(child.type)) {
-      const length = "value" in child && typeof child.value === "string" ? child.value.length : 1;
-      return { ...child, type: "Str", value: maskValue(length) };
-    }
-    if (
-      child.type === "Str"
-      && "value" in child
-      && typeof child.value === "string"
-      && isAutolinkParent(parent as { type: string; [key: string]: unknown; } | null | undefined)
-    ) {
-      return { ...child, value: maskValue(child.value.length) };
-    }
-    return child;
-  });
-  return new StringSource(masked as unknown as ConstructorParameters<typeof StringSource>[0]);
+// autolinkのURL文字列を同一長のダミーに置き換えるマスク（toMaskedStringSourceへ渡す）
+const maskAutolinkUrl = (node: { type: string; [key: string]: unknown; }, parent: { type: string; [key: string]: unknown; } | null | undefined) => {
+  if (node.type === "Str" && typeof node.value === "string" && isAutolinkParent(parent)) {
+    return { ...node, value: maskValue(node.value.length) };
+  }
+  return undefined;
 };
 
 const rule: TextlintRuleModule<Options> = (context, options = {}) => {
-  validateOptions(options);
+  validateOptions(optionsSchema, options);
   const { Syntax, RuleError, report, locator } = context;
   const allows = options.allows ?? [];
   const dashes = options.dashes ?? defaultDashes;
@@ -143,15 +113,15 @@ const rule: TextlintRuleModule<Options> = (context, options = {}) => {
   const dashRunPattern = contextByChar.size > 0
     ? new RegExp(`[${[...contextByChar.keys()].join("")}]+`, "gu")
     : null;
-  let blockQuoteDepth = 0;
+  const blockQuote = createBlockQuoteDepth();
   const check = (node: SourceTargetNode) => {
     if (dashRunPattern === null) {
       return;
     }
-    if (skipBlockQuote && blockQuoteDepth > 0) {
+    if (skipBlockQuote && blockQuote.isInside()) {
       return;
     }
-    const source = toMaskedStringSource(node);
+    const source = toMaskedStringSource(node, maskAutolinkUrl);
     const text = source.toString();
     const allowedRanges = allows.length > 0 ? matchPatterns(text, allows) : [];
     for (const dashMatch of text.matchAll(dashRunPattern)) {
@@ -186,12 +156,8 @@ const rule: TextlintRuleModule<Options> = (context, options = {}) => {
     }
   };
   return {
-    [Syntax.BlockQuote]() {
-      blockQuoteDepth += 1;
-    },
-    [Syntax.BlockQuoteExit]() {
-      blockQuoteDepth -= 1;
-    },
+    [Syntax.BlockQuote]: blockQuote.enter,
+    [Syntax.BlockQuoteExit]: blockQuote.exit,
     [Syntax.Paragraph](node) {
       check(node);
     },

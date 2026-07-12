@@ -83,6 +83,16 @@ describe("sentence-per-line", () => {
       expect(messages).toHaveLength(1);
       expect(messages[0]?.range).toEqual([7, 13]);
     });
+
+    it("[positive] CRLFで改行された文ごとの段落を許容する", async () => {
+      const messages = await lint("一文目です。\r\n二文目です。");
+      expect(messages).toHaveLength(0);
+    });
+
+    it("[negative] CRLF段落でも同一行の2文目を報告する", async () => {
+      const messages = await lint("一文目です。二文目です。\r\n三文目です。");
+      expect(messages).toHaveLength(1);
+    });
   });
 
   describe("skipBlockQuoteを無効にしたとき", () => {
@@ -111,11 +121,16 @@ describe("sentence-per-line", () => {
     };
 
     it("[negative] 不明なオプションキーを拒否する", () => {
-      expect(initWith("{\"skipBlockquote\": true}")).toThrow("skipBlockquote must be removed");
+      expect(initWith("{\"skipBlockquote\": true}")).toThrow("「skipBlockquote」");
     });
 
     it("[negative] skipBlockQuoteの型を検証する", () => {
-      expect(initWith("{\"skipBlockQuote\": \"true\"}")).toThrow("skipBlockQuote must be boolean");
+      expect(initWith("{\"skipBlockQuote\": \"true\"}")).toThrow("「skipBlockQuote」");
+    });
+
+    it("[negative] オブジェクト以外の値を拒否する", () => {
+      expect(initWith("\"invalid\"")).toThrow("オプションが不正です。オブジェクトで指定してください。");
+      expect(initWith("42")).toThrow("オブジェクトで指定してください");
     });
   });
 });
