@@ -6,7 +6,7 @@
 
 | ルール | 検出内容 | デフォルト |
 | --- | --- | --- |
-| [no-dash](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/tree/main/packages/no-dash) | 地の文・見出しでのダッシュ（`—` `―` `–`）の使用 | 有効 |
+| [no-dash](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/tree/main/packages/no-dash) | 地の文・見出し・テーブルセルでのダッシュ（`—` `―` `–`）の使用 | 有効 |
 | [sentence-per-line](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/tree/main/packages/sentence-per-line) | 1行に複数の文が含まれている状態 | 有効 |
 | [no-arbitrary-line-break](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/tree/main/packages/no-arbitrary-line-break) | 許可された記号の直後以外での段落内の改行 | 有効 |
 | [no-doubled-additive-conjunction](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/tree/main/packages/no-doubled-additive-conjunction) | 同一段落内での累加の接続詞（さらに・また・加えて）の複数回使用 | 有効 |
@@ -104,4 +104,4 @@ deno add --dev jsr:@cffnpwr/textlint-rule-preset-ja-writing-extras
 
 ## ライセンス
 
-[MIT](../../LICENSE)
+[MIT](./LICENSE)
