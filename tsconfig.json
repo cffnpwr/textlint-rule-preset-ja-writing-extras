@@ -1,4 +1,4 @@
 {
   "extends": "@cffnpwr/tsconfig/bun",
-  "include": ["*.config.ts"],
+  "include": ["*.config.ts", "scripts/**/*.ts"],
 }

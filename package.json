@@ -10,7 +10,9 @@
     "test": "bun test",
     "typecheck": "bun run --filter='*' typecheck",
     "lint": "eslint .",
-    "lint:fix": "eslint --fix ."
+    "lint:fix": "eslint --fix .",
+    "license:sync": "bun run scripts/sync-license.ts",
+    "license:check": "bun run scripts/sync-license.ts --check"
   },
   "devDependencies": {
     "@cffnpwr/eslint-config": "1.2.0",
