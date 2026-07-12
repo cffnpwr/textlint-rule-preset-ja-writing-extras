@@ -1,6 +1,6 @@
 {
   "name": "@cffnpwr/textlint-rule-preset-ja-writing-extras-shared",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "textlint-rule-preset-ja-writing-extrasの各ルールが共有する内部ユーティリティ",
   "homepage": "https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras",
   "bugs": "https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/issues",
