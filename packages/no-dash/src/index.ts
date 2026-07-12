@@ -57,19 +57,70 @@ const japaneseCharPattern = /[\p{sc=Hiragana}\p{sc=Katakana}\p{sc=Han}\u30FC々]
 
 const isJapanese = (char: string | undefined) => char !== undefined && japaneseCharPattern.test(char);
 
+// index直後から始まるコードポイント（サロゲートペアを1文字として扱う）
+const codePointAt = (text: string, index: number): string | undefined => {
+  if (index < 0 || index >= text.length) {
+    return undefined;
+  }
+  const codePoint = text.codePointAt(index);
+  return codePoint === undefined ? undefined : String.fromCodePoint(codePoint);
+};
+
+// indexの直前で終わるコードポイント（サロゲートペアを1文字として扱う）
+const codePointBefore = (text: string, index: number): string | undefined => {
+  if (index <= 0) {
+    return undefined;
+  }
+  const low = text.charCodeAt(index - 1);
+  if (low >= 0xDC00 && low <= 0xDFFF && index >= 2) {
+    const high = text.charCodeAt(index - 2);
+    if (high >= 0xD800 && high <= 0xDBFF) {
+      return text.slice(index - 2, index);
+    }
+  }
+  return text[index - 1];
+};
+
 type SourceTargetNode = TxtHeaderNode | TxtParagraphNode | TxtTableCellNode;
 
 // 本文テキスト化の際に同一長のダミー文字列へ置き換え、隣接判定から隔離するノード型
 const maskedNodeTypes = new Set(["Code", "Html", "Image"]);
 
+const maskValue = (length: number): string => "x".repeat(Math.max(length, 1));
+
+// autolink（<https://…>）はStr子にURL文字列がそのまま入るため、表示テキストがURLそのものの
+// Linkを判定してURLを本文から隔離する。通常リンク（表示テキスト≠URL）の表示テキストは対象に残す
+const isAutolinkParent = (parent: { type: string; [key: string]: unknown; } | null | undefined): boolean => {
+  if (parent?.type !== "Link") {
+    return false;
+  }
+  if (typeof parent.url !== "string" || !Array.isArray(parent.children)) {
+    return false;
+  }
+  const childText = parent.children
+    .map((child) => (typeof child === "object" && child !== null && "value" in child && typeof child.value === "string"
+      ? child.value
+      : ""))
+    .join("");
+  return childText === parent.url;
+};
+
 // unist-util-mapとtextlint-util-to-string 3.3.4はtextlint 15系と異なる型定義
 // （unist・@textlint/ast-node-types@13）を要求するため、そのままでは渡せない（構造は互換）。
 // 外部ライブラリとの境界に限りアサーションで変換する。
 const toMaskedStringSource = (node: SourceTargetNode): StringSource => {
-  const masked = map(node as unknown as Parameters<typeof map>[0], (child) => {
+  const masked = map(node as unknown as Parameters<typeof map>[0], (child, _index, parent) => {
     if (maskedNodeTypes.has(child.type)) {
       const length = "value" in child && typeof child.value === "string" ? child.value.length : 1;
-      return { ...child, type: "Str", value: "x".repeat(Math.max(length, 1)) };
+      return { ...child, type: "Str", value: maskValue(length) };
+    }
+    if (
+      child.type === "Str"
+      && "value" in child
+      && typeof child.value === "string"
+      && isAutolinkParent(parent as { type: string; [key: string]: unknown; } | null | undefined)
+    ) {
+      return { ...child, value: maskValue(child.value.length) };
     }
     return child;
   });
@@ -109,8 +160,8 @@ const rule: TextlintRuleModule<Options> = (context, options = {}) => {
       if (allowedRanges.some((range) => range.startIndex < end && start < range.endIndex)) {
         continue;
       }
-      const before = text[start - 1];
-      const after = text[end];
+      const before = codePointBefore(text, start);
+      const after = codePointAt(text, end);
       const shouldReport = [...new Set(dashMatch[0])].some((char) => match(contextByChar.get(char))
         .with("always", () => true)
         .with("japanese-both", () => isJapanese(before) && isJapanese(after))
