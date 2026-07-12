@@ -126,4 +126,4 @@ jobs:
 
       - name: Publish to JSR
         working-directory: ${{ needs.detect-package.outputs.dir }}
-        run: bunx jsr publish --allow-slow-types
+        run: bunx jsr publish

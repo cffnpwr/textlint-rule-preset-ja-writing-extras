@@ -36,7 +36,11 @@ export const validateOptions = (schema: OptionsSchema, options: unknown): void =
 
 // BlockQuoteのネスト深さを管理する。ルールのハンドラにenter/exitを割り当て、
 // isInsideで引用配下かどうかを判定する
-export const createBlockQuoteDepth = () => {
+export const createBlockQuoteDepth = (): {
+  enter: () => void;
+  exit: () => void;
+  isInside: () => boolean;
+} => {
   let depth = 0;
   return {
     enter: (): void => {

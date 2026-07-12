@@ -8,7 +8,7 @@ import { match } from "ts-pattern";
 
 const dashContextSchema = type("'always' | 'japanese-both' | 'japanese-either'");
 
-export type DashContext = typeof dashContextSchema.infer;
+export type DashContext = "always" | "japanese-both" | "japanese-either";
 
 const dashKinds = ["emDash", "horizontalBar", "enDash"] as const;
 
@@ -27,7 +27,21 @@ const optionsSchema = type({
   "severity?": "unknown",
 });
 
-export type Options = Omit<typeof optionsSchema.infer, "severity">;
+export type Options = {
+  allows?: string[];
+  dashes?: {
+    emDash?: DashContext;
+    horizontalBar?: DashContext;
+    enDash?: DashContext;
+  };
+  skipBlockQuote?: boolean;
+};
+
+// arktypeスキーマ（実行時バリデータ）と公開型の同期をコンパイル時に保証する
+type Expect<T extends true> = T;
+type Equals<A, B> = (<T>() => T extends A ? 1 : 2) extends (<T>() => T extends B ? 1 : 2) ? true : false;
+type _AssertDashContext = Expect<Equals<DashContext, typeof dashContextSchema.infer>>;
+type _AssertOptions = Expect<Equals<Options, Omit<typeof optionsSchema.infer, "severity">>>;
 
 const dashCharacters: Record<DashKind, string> = {
   emDash: "\u2014",
