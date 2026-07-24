@@ -1,7 +1,8 @@
+import { describe, expect, it } from "bun:test";
+
 import { TextlintKernel } from "@textlint/kernel";
 import markdown from "@textlint/textlint-plugin-markdown";
 import { type } from "arktype";
-import { describe, expect, it } from "bun:test";
 
 import { createBlockQuoteDepth, maskValue, toMaskedStringSource, validateOptions } from "./index.ts";
 
