@@ -30,6 +30,11 @@ code blocks are excluded.
 
 When a line has two or more sentences, each sentence from the second onward is reported.
 
+This rule supports autofixing with `textlint --fix`. Each fix inserts a line break at the sentence
+boundary. Inside a list item, the continuation line is indented to match the item's own indentation,
+so the fix does not fall back on
+[lazy continuation](https://spec.commonmark.org/0.31.2/#list-items).
+
 ## How to Install
 
 ### npm
