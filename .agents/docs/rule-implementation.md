@@ -80,6 +80,48 @@ report(node, new RuleError(message, { padding: locator.range([start, end]) }));
 
 メッセージは何が問題かと代わりの書き方の両方を含める。
 
+## fixable ruleとsuggestions
+
+`packages/no-arbitrary-line-break/src/index.ts`と`packages/sentence-per-line/src/index.ts`が代表例。
+
+自動修正に対応するルールは`TextlintFixableRuleModule<Options>`（`{ linter, fixer }`）をdefault exportする。
+検出ロジックは1つのreporter関数に保ち、`linter`・`fixer`の両方へ同じ関数を渡す。
+`@textlint/kernel`の`linter-task.js`は`ruleDescriptor.linter`を、`fixer-task.js`は`fixableRuleDescriptor.fixer`を呼ぶため、この形で両方が同じ検出結果にもとづいて動く。
+
+```ts
+const reporter: TextlintRuleReporter<Options> = (context, options = {}) => {
+  // ...
+};
+
+// 検出ロジックはlinter・fixerで共通のため、同じreporter関数を両方へ渡す
+const rule: TextlintFixableRuleModule<Options> = { linter: reporter, fixer: reporter };
+
+export default rule;
+```
+
+`fix`の`range`は`report`へ渡したノードの先頭からの相対位置で、`locator.range()`に渡す`padding`と同じ基準。
+
+```ts
+report(node, new RuleError(message, {
+  padding: locator.range([start, end]),
+  fix: fixer.replaceTextRange([start, end], replacement),
+}));
+```
+
+default exportが関数でなく`{ linter, fixer }`になるため、オプション検証のテストは`rule(...)`ではなく`rule.linter(...)`を呼ぶ。
+
+```ts
+rule.linter(JSON.parse("{}"), JSON.parse(optionsJson));
+```
+
+修正結果が一意に定まらない場合や、文意に触れる修正は`fix`にせず`suggestions`に留める。
+`suggestions`は`textlint --fix`では自動適用されず、エディタ上でユーザーが選択したときだけ適用される。
+`suggestions`を返すルールのdefault exportは`TextlintRuleReporter`のままでよく、`{ linter, fixer }`にする必要はない。
+
+`StringSource`（`toMaskedStringSource`）の`originalIndexFromIndex`は、マスク後テキストの位置を元テキストへ戻すためのものだが、マークアップの境界ではずれることがある。
+`no-doubled-additive-conjunction`では、接続詞と直後の読点の間にマークアップが挟まる場合に`originalIndexFromIndex`が接続詞の終端ではなく読点側の位置を返してしまう不具合が実際にあった。
+修正範囲のように「元テキストのどこを書き換えるか」を決める用途では、`originalIndexFromIndex`の結果をそのまま使わず、`getSource(node)`で得た元テキストと直接照合して確定する。
+
 ## 外部ライブラリとの型の境界
 
 次のライブラリはtextlint 15系と異なる`@textlint/ast-node-types`を要求する。
@@ -113,5 +155,8 @@ const lintWith = (options?: Options) => (text: string) => kernel
 - 検出のテストでは件数だけでなく`range`とメッセージも検証する。
 - オプション検証のテストは`JSON.parse`経由で不正な値を渡す。
 - この検証はcontextへ触れる前に走るため、contextはダミーでよい。
+- fixのテストは`kernel.fixText(text, options)`を呼び、戻り値の`output`で修正後テキストを検証する。
+- suggestionsのテストは`kernel.lintText`の結果の`messages[].suggestions`（`id`・`message`・`fix`）を検証する。
+- suggestionsは`fixText`では適用されないため、`fixText`の`output`が入力から変わらないことも合わせて確認する。
 
 Markdownの構文（強調・リンク・テーブル・見出し・引用・コードブロック）、CRLF改行、サロゲートペアの境界は取りこぼしやすいので、ルールの性質に応じてテストを置く。
