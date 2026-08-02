@@ -7,6 +7,9 @@ const files = ["**/*.ts"];
 
 export default defineConfig([
   {
+    ignores: [".tmp/**"],
+  },
+  {
     files,
     languageOptions: {
       globals: {
