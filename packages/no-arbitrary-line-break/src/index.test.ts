@@ -21,6 +21,16 @@ const lintWith = (options?: Options) => (text: string) => kernel
   })
   .then((result) => result.messages);
 
+// Given: オプションを固定し、When: テキストをfixした結果の修正後テキストを返す
+const fixWith = (options?: Options) => (text: string) => kernel
+  .fixText(text, {
+    ext: ".md",
+    filePath: "test.md",
+    plugins: [{ pluginId: "markdown", plugin: markdown }],
+    rules: [{ ruleId: "no-arbitrary-line-break", rule, options }],
+  })
+  .then((result) => result.output);
+
 describe("no-arbitrary-line-break", () => {
   describe("デフォルト設定のとき", () => {
     const lint = lintWith();
@@ -127,6 +137,64 @@ describe("no-arbitrary-line-break", () => {
     });
   });
 
+  describe("fixのとき", () => {
+    const fix = fixWith();
+    const lint = lintWith();
+
+    it("[negative] 和字間の改行を除去し、空文字列で連結する", async () => {
+      const output = await fix("これは\n文です。");
+      expect(output).toBe("これは文です。");
+    });
+
+    it("[negative] 英単語間の改行を半角スペースに変える", async () => {
+      const output = await fix("use textlint\nand more");
+      expect(output).toBe("use textlint and more");
+    });
+
+    it("[negative] 英字と和字の境界の改行を除去し、空文字列で連結する", async () => {
+      const output = await fix("textlint\nを使う");
+      expect(output).toBe("textlintを使う");
+    });
+
+    it("[negative] 行末の空白ごと改行を除去する", async () => {
+      const output = await fix("これは  \n文です。");
+      expect(output).toBe("これは文です。");
+    });
+
+    it("[negative] 行末のバックスラッシュ（ハードブレイク）ごと改行を除去する", async () => {
+      const output = await fix("これは\\\n文です。");
+      expect(output).toBe("これは文です。");
+    });
+
+    it("[negative] 次行の行頭のインデントごと改行を除去する", async () => {
+      const output = await fix("これは\n  文です。");
+      expect(output).toBe("これは文です。");
+    });
+
+    it("[negative] CRLF改行を除去する", async () => {
+      const output = await fix("途中で\r\n改行します。");
+      expect(output).toBe("途中で改行します。");
+    });
+
+    it("[positive] 許可記号の直後の改行は修正しない", async () => {
+      const text = "読点の後で、\n改行します。";
+      const output = await fix(text);
+      expect(output).toBe(text);
+    });
+
+    it("[positive] 引用（BlockQuote）内は既定で修正しない", async () => {
+      const text = "> 引用の\n> 改行は対象外です。";
+      const output = await fix(text);
+      expect(output).toBe(text);
+    });
+
+    it("[negative] 修正後のテキストを再度lintすると違反が0件になる", async () => {
+      const output = await fix("文の途中\nで改行しています。");
+      const messages = await lint(output);
+      expect(messages).toHaveLength(0);
+    });
+  });
+
   describe("allowAfterを差し替えたとき", () => {
     it("[positive] 指定した記号の直後の改行を許容する", async () => {
       const messages = await lintWith({ allowAfter: [":"] })("コロンの後:\n続きです。");
@@ -167,10 +235,7 @@ describe("no-arbitrary-line-break", () => {
     // .textlintrc由来の型付けされない入力を検査するため、JSON経由で不正な値を渡す。
     // バリデーションはcontextに触れる前に走るため、contextはダミーでよい
     const initWith = (optionsJson: string) => () => {
-      if (typeof rule !== "function") {
-        throw new TypeError("rule should be a reporter function");
-      }
-      rule(JSON.parse("{}"), JSON.parse(optionsJson));
+      rule.linter(JSON.parse("{}"), JSON.parse(optionsJson));
     };
 
     it("[negative] 不明なオプションキーを拒否する", () => {

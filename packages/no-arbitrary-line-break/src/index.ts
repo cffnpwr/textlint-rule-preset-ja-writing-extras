@@ -1,6 +1,6 @@
-import type { TextlintRuleModule } from "@textlint/types";
+import type { TextlintFixableRuleModule, TextlintRuleReporter } from "@textlint/types";
 
-import { createBlockQuoteDepth, validateOptions } from "@cffnpwr/textlint-rule-preset-ja-writing-extras-shared";
+import { codePointAt, codePointBefore, createBlockQuoteDepth, isJapanese, validateOptions } from "@cffnpwr/textlint-rule-preset-ja-writing-extras-shared";
 import { type } from "arktype";
 
 const optionsSchema = type({
@@ -20,6 +20,31 @@ type Expect<T extends true> = T;
 type Equals<A, B> = (<T>() => T extends A ? 1 : 2) extends (<T>() => T extends B ? 1 : 2) ? true : false;
 type _AssertOptions = Expect<Equals<Options, Omit<typeof optionsSchema.infer, "severity">>>;
 
+const isSpaceOrTabOrCr = (char: string | undefined): boolean => char === " " || char === "\t" || char === "\r";
+const isSpaceOrTab = (char: string | undefined): boolean => char === " " || char === "\t";
+
+// 引数iが指す改行文字を取り除いて行を連結するための置換範囲を求める。
+// 開始位置はiから空白類→バックスラッシュ（最大1つ）→空白類の順に後方へ食い進めた手前まで、
+// 終了位置は改行の直後（インデックスi+1）からスペース・タブを食い進めた位置まで
+// （検出条件（allowAfter判定）には影響しない、修正専用の計算）
+const findFixRange = (text: string, i: number): { start: number; end: number; } => {
+  let start = i;
+  while (start > 0 && isSpaceOrTabOrCr(text[start - 1])) {
+    start -= 1;
+  }
+  if (start > 0 && text[start - 1] === "\\") {
+    start -= 1;
+  }
+  while (start > 0 && isSpaceOrTabOrCr(text[start - 1])) {
+    start -= 1;
+  }
+  let end = i + 1;
+  while (end < text.length && isSpaceOrTab(text[end])) {
+    end += 1;
+  }
+  return { start, end };
+};
+
 const defaultAllowAfter = [
   "、",
   "。",
@@ -38,9 +63,9 @@ const defaultAllowAfter = [
   "]",
 ];
 
-const rule: TextlintRuleModule<Options> = (context, options = {}) => {
+const rule: TextlintRuleReporter<Options> = (context, options = {}) => {
   validateOptions(optionsSchema, options);
-  const { Syntax, RuleError, report, getSource, locator } = context;
+  const { Syntax, RuleError, report, getSource, locator, fixer } = context;
   const allowAfterList = options.allowAfter ?? defaultAllowAfter;
   const allowAfter = new Set(allowAfterList);
   const skipBlockQuote = options.skipBlockQuote ?? true;
@@ -86,10 +111,23 @@ const rule: TextlintRuleModule<Options> = (context, options = {}) => {
         if (before !== undefined && allowAfter.has(before)) {
           continue;
         }
-        report(node, new RuleError(message, { padding: locator.range([i, i + 1]) }));
+        const { start, end } = findFixRange(text, i);
+        const beforeChar = codePointBefore(text, start);
+        const afterChar = codePointAt(text, end);
+        // 置換範囲の前後がどちらも存在し、かつどちらも和字でないときだけ語間の区切りとして半角スペースを残す
+        const replacement = beforeChar !== undefined && afterChar !== undefined && !isJapanese(beforeChar) && !isJapanese(afterChar)
+          ? " "
+          : "";
+        report(node, new RuleError(message, {
+          padding: locator.range([i, i + 1]),
+          fix: fixer.replaceTextRange([start, end], replacement),
+        }));
       }
     },
   };
 };
 
-export default rule;
+// 検出ロジックはlinter・fixerで共通のため、同じreporter関数を両方へ渡す
+const ruleModule: TextlintFixableRuleModule<Options> = { linter: rule, fixer: rule };
+
+export default ruleModule;

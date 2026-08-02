@@ -36,6 +36,13 @@ the end of a sentence", this rule restricts "the positions where a line break is
 sentence". Enabling both establishes the discipline that "a line break is allowed only at the end of
 a sentence or immediately after a delimiter symbol".
 
+This rule supports autofix via `textlint --fix`.
+The fix removes the line break together with the surrounding whitespace (and a trailing `\` for a
+hard break), joining the two lines into one.
+A single half-width space is kept only when the character immediately before and the character
+immediately after the removed range are both non-Japanese (for example, between two English words);
+otherwise the lines are joined directly with no space.
+
 ## How to Install
 
 ### npm
