@@ -1,7 +1,7 @@
 import type { TxtHeaderNode, TxtParagraphNode, TxtTableCellNode } from "@textlint/ast-node-types";
 import type { TextlintRuleModule } from "@textlint/types";
 
-import { createBlockQuoteDepth, maskValue, toMaskedStringSource, validateOptions } from "@cffnpwr/textlint-rule-preset-ja-writing-extras-shared";
+import { codePointAt, codePointBefore, createBlockQuoteDepth, isJapanese, maskValue, toMaskedStringSource, validateOptions } from "@cffnpwr/textlint-rule-preset-ja-writing-extras-shared";
 import { matchPatterns } from "@textlint/regexp-string-matcher";
 import { type } from "arktype";
 import { match } from "ts-pattern";
@@ -53,35 +53,6 @@ const defaultDashes: Partial<Record<DashKind, DashContext>> = {
   emDash: "always",
   horizontalBar: "always",
   enDash: "japanese-both",
-};
-
-// U+30FC: 長音符（Script=CommonのためScript指定では拾えない）
-const japaneseCharPattern = /[\p{sc=Hiragana}\p{sc=Katakana}\p{sc=Han}\u30FC々]/u;
-
-const isJapanese = (char: string | undefined) => char !== undefined && japaneseCharPattern.test(char);
-
-// index直後から始まるコードポイント（サロゲートペアを1文字として扱う）
-const codePointAt = (text: string, index: number): string | undefined => {
-  if (index < 0 || index >= text.length) {
-    return undefined;
-  }
-  const codePoint = text.codePointAt(index);
-  return codePoint === undefined ? undefined : String.fromCodePoint(codePoint);
-};
-
-// indexの直前で終わるコードポイント（サロゲートペアを1文字として扱う）
-const codePointBefore = (text: string, index: number): string | undefined => {
-  if (index <= 0) {
-    return undefined;
-  }
-  const low = text.charCodeAt(index - 1);
-  if (low >= 0xDC00 && low <= 0xDFFF && index >= 2) {
-    const high = text.charCodeAt(index - 2);
-    if (high >= 0xD800 && high <= 0xDBFF) {
-      return text.slice(index - 2, index);
-    }
-  }
-  return text[index - 1];
 };
 
 type SourceTargetNode = TxtHeaderNode | TxtParagraphNode | TxtTableCellNode;

@@ -1,5 +1,5 @@
 import type { TxtParagraphNode } from "@textlint/ast-node-types";
-import type { TextlintRuleModule } from "@textlint/types";
+import type { TextlintFixableRuleModule, TextlintRuleReporter } from "@textlint/types";
 
 import { createBlockQuoteDepth, validateOptions } from "@cffnpwr/textlint-rule-preset-ja-writing-extras-shared";
 import { type } from "arktype";
@@ -25,9 +25,9 @@ type _AssertOptions = Expect<Equals<Options, Omit<typeof optionsSchema.infer, "s
 // 外部ライブラリとの境界に限りアサーションで変換する。
 const splitParagraph = (node: TxtParagraphNode) => splitAST(node as unknown as Parameters<typeof splitAST>[0]);
 
-const rule: TextlintRuleModule<Options> = (context, options = {}) => {
+const reporter: TextlintRuleReporter<Options> = (context, options = {}) => {
   validateOptions(optionsSchema, options);
-  const { Syntax, RuleError, report, getSource, locator } = context;
+  const { Syntax, RuleError, report, getSource, locator, fixer } = context;
   const skipBlockQuote = options.skipBlockQuote ?? true;
   const blockQuote = createBlockQuoteDepth();
   return {
@@ -51,10 +51,16 @@ const rule: TextlintRuleModule<Options> = (context, options = {}) => {
         }
         return line;
       };
+      // node.loc.start.columnは0始まりで、リスト項目内の段落ではマーカー分の桁数を含む
+      // （@textlint/ast-node-types NodeType.d.ts）。これをそのままインデント幅として使うと、
+      // 継続行のインデントを省いてもリスト項目の内容として扱われるCommonMark仕様の規定
+      // （List Items: https://spec.commonmark.org/0.31.2/#list-items）に頼らずリスト項目に留まる。
+      const indent = " ".repeat(node.loc.start.column);
       const sentences = splitParagraph(node).children.filter(
         (child) => child.type === SentenceSplitterSyntax.Sentence,
       );
       let previousEndLine = -1;
+      let previousEndIndex = -1;
       for (const sentence of sentences) {
         const relStart = sentence.range[0] - base;
         const relEnd = sentence.range[1] - base;
@@ -64,14 +70,20 @@ const rule: TextlintRuleModule<Options> = (context, options = {}) => {
             node,
             new RuleError(
               "1行に複数の文が含まれています。文ごとに改行してください。",
-              { padding: locator.range([relStart, relEnd]) },
+              {
+                padding: locator.range([relStart, relEnd]),
+                fix: fixer.replaceTextRange([previousEndIndex, relStart], `\n${indent}`),
+              },
             ),
           );
         }
         previousEndLine = lineIndexAt(relEnd);
+        previousEndIndex = relEnd;
       }
     },
   };
 };
+
+const rule: TextlintFixableRuleModule<Options> = { linter: reporter, fixer: reporter };
 
 export default rule;

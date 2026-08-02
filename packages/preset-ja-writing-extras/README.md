@@ -10,14 +10,23 @@ A preset that bundles additional textlint rules for Japanese writing.
 
 ## Bundled Rules
 
-| Rule | Detects | Default |
-| --- | --- | --- |
-| [no-dash](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/tree/main/packages/no-dash) | Use of dashes (`—` `―` `–`) in body text, headings, and table cells | Enabled |
-| [sentence-per-line](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/tree/main/packages/sentence-per-line) | Multiple sentences contained on a single line | Enabled |
-| [no-arbitrary-line-break](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/tree/main/packages/no-arbitrary-line-break) | Line breaks within a paragraph anywhere other than immediately after an allowed symbol | Enabled |
-| [no-doubled-additive-conjunction](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/tree/main/packages/no-doubled-additive-conjunction) | Multiple uses of additive conjunctions (さらに・また・加えて) within the same paragraph | Enabled |
+| Rule | Detects | Default | Autofix |
+| --- | --- | --- | --- |
+| [no-dash](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/tree/main/packages/no-dash) | Use of dashes (`—` `―` `–`) in body text, headings, and table cells | Enabled | Not supported |
+| [sentence-per-line](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/tree/main/packages/sentence-per-line) | Multiple sentences contained on a single line | Enabled | Supported (`--fix`) |
+| [no-arbitrary-line-break](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/tree/main/packages/no-arbitrary-line-break) | Line breaks within a paragraph anywhere other than immediately after an allowed symbol | Enabled | Supported (`--fix`) |
+| [no-doubled-additive-conjunction](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/tree/main/packages/no-doubled-additive-conjunction) | Multiple uses of additive conjunctions (さらに・また・加えて) within the same paragraph | Enabled | Suggestions only (not applied by `--fix`) |
 
 For details on each rule's detection conditions and options, see the respective README.
+
+`sentence-per-line`'s fix inserts a line break at each sentence boundary, while
+`no-arbitrary-line-break`'s fix removes a line break that is not immediately after an allowed
+delimiter — the two fixes move in opposite directions (insert vs. remove). With the default options
+they do not conflict: a sentence boundary ends with a delimiter such as `。`, and
+`no-arbitrary-line-break`'s default `allowAfter` includes that delimiter, so the line break that
+`sentence-per-line` inserts falls exactly where `no-arbitrary-line-break` already allows a break. If
+`allowAfter` is configured without the sentence-ending delimiters, the two rules' fixes can conflict
+on the same line break within a single `textlint --fix` run.
 
 ## How to Install
 

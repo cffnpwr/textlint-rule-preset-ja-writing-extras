@@ -34,6 +34,36 @@ export const validateOptions = (schema: OptionsSchema, options: unknown): void =
   }
 };
 
+// U+30FC: 長音符（Script=CommonのためScript指定では拾えない）
+const japaneseCharPattern = /[\p{sc=Hiragana}\p{sc=Katakana}\p{sc=Han}\u30FC々]/u;
+
+// 与えられた1文字が和字かどうかを判定する
+export const isJapanese = (char: string | undefined): boolean => char !== undefined && japaneseCharPattern.test(char);
+
+// index直後から始まるコードポイント（サロゲートペアを1文字として扱う）
+export const codePointAt = (text: string, index: number): string | undefined => {
+  if (index < 0 || index >= text.length) {
+    return undefined;
+  }
+  const codePoint = text.codePointAt(index);
+  return codePoint === undefined ? undefined : String.fromCodePoint(codePoint);
+};
+
+// indexの直前で終わるコードポイント（サロゲートペアを1文字として扱う）
+export const codePointBefore = (text: string, index: number): string | undefined => {
+  if (index <= 0) {
+    return undefined;
+  }
+  const low = text.charCodeAt(index - 1);
+  if (low >= 0xDC00 && low <= 0xDFFF && index >= 2) {
+    const high = text.charCodeAt(index - 2);
+    if (high >= 0xD800 && high <= 0xDBFF) {
+      return text.slice(index - 2, index);
+    }
+  }
+  return text[index - 1];
+};
+
 // BlockQuoteのネスト深さを管理する。ルールのハンドラにenter/exitを割り当て、
 // isInsideで引用配下かどうかを判定する
 export const createBlockQuoteDepth = (): {

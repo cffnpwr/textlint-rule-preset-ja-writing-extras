@@ -1,5 +1,8 @@
 import { describe, expect, it } from "bun:test";
 
+import type { AnyTxtNode } from "@textlint/ast-node-types";
+import type { TextlintRuleModule } from "@textlint/types";
+
 import { TextlintKernel } from "@textlint/kernel";
 import markdown from "@textlint/textlint-plugin-markdown";
 
@@ -18,6 +21,57 @@ const lintWith = (options?: Options) => (text: string) => kernel
     rules: [{ ruleId: "sentence-per-line", rule, options }],
   })
   .then((result) => result.messages);
+
+// Given: オプションを固定し、When: テキストをfixした結果の出力テキストを返す
+const fixWith = (options?: Options) => (text: string) => kernel
+  .fixText(text, {
+    ext: ".md",
+    filePath: "test.md",
+    plugins: [{ pluginId: "markdown", plugin: markdown }],
+    rules: [{ ruleId: "sentence-per-line", rule, options }],
+  })
+  .then((result) => result.output);
+
+// List・ListItem・Paragraphの出現数を数える
+// リスト項目内の段落を修正したときに、段落の分割やリスト項目の分裂が起きていないかを確認するために使う
+const countNodeType = (node: AnyTxtNode, type: string): number => {
+  const self = node.type === type ? 1 : 0;
+  if (!("children" in node) || !Array.isArray(node.children)) {
+    return self;
+  }
+  return node.children.reduce(
+    (sum: number, child) => sum + countNodeType(child as AnyTxtNode, type),
+    self,
+  );
+};
+
+// Markdownの段落構造（List・ListItem・Paragraphの出現数）を、テキストをlintした結果のメッセージへJSONで埋め込んで取り出す
+const structureProbe: TextlintRuleModule = (context) => {
+  const { Syntax, RuleError, report } = context;
+  return {
+    [Syntax.Document](node) {
+      report(
+        node,
+        new RuleError(
+          JSON.stringify({
+            list: countNodeType(node, "List"),
+            listItem: countNodeType(node, "ListItem"),
+            paragraph: countNodeType(node, "Paragraph"),
+          }),
+        ),
+      );
+    },
+  };
+};
+
+const structureOf = (text: string) => kernel
+  .lintText(text, {
+    ext: ".md",
+    filePath: "test.md",
+    plugins: [{ pluginId: "markdown", plugin: markdown }],
+    rules: [{ ruleId: "structure-probe", rule: structureProbe }],
+  })
+  .then((result) => JSON.parse(result.messages[0]?.message ?? "{}") as Record<string, number>);
 
 describe("sentence-per-line", () => {
   describe("デフォルト設定のとき", () => {
@@ -95,6 +149,48 @@ describe("sentence-per-line", () => {
     });
   });
 
+  describe("自動修正のとき", () => {
+    const fix = fixWith();
+
+    it("[negative] 1行に2文ある段落を一文一行に分割する", async () => {
+      const output = await fix("一文目です。二文目です。");
+      expect(output).toBe("一文目です。\n二文目です。");
+    });
+
+    it("[negative] 1行に3文以上ある段落を一文一行に分割する", async () => {
+      const output = await fix("一文目です。二文目です。三文目です。");
+      expect(output).toBe("一文目です。\n二文目です。\n三文目です。");
+    });
+
+    it("[negative] 文の間に空白がある場合、空白を改行に置き換える", async () => {
+      const output = await fix("一文目です。 二文目です。");
+      expect(output).toBe("一文目です。\n二文目です。");
+    });
+
+    it("[negative] リスト項目内の段落を修正すると継続行に正規のインデントが付き、段落構造を保つ", async () => {
+      const input = "- 項目です。二文目です。";
+      const output = await fix(input);
+      expect(output).toBe("- 項目です。\n  二文目です。");
+      expect(await structureOf(output)).toEqual(await structureOf(input));
+    });
+
+    it("[positive] 既に一文一行になっている段落を変更しない", async () => {
+      const output = await fix("一文目です。\n二文目です。");
+      expect(output).toBe("一文目です。\n二文目です。");
+    });
+
+    it("[positive] 引用内は既定では修正しない", async () => {
+      const output = await fix("> 引用です。二文目です。");
+      expect(output).toBe("> 引用です。二文目です。");
+    });
+
+    it("[negative] 修正後のテキストを同じルールで再度lintすると違反がなくなる", async () => {
+      const output = await fix("一文目です。二文目です。三文目です。");
+      const messages = await lintWith()(output);
+      expect(messages).toHaveLength(0);
+    });
+  });
+
   describe("skipBlockQuoteを無効にしたとき", () => {
     const lint = lintWith({ skipBlockQuote: false });
 
@@ -114,10 +210,7 @@ describe("sentence-per-line", () => {
     // .textlintrc由来の型付けされない入力を検査するため、JSON経由で不正な値を渡す。
     // バリデーションはcontextに触れる前に走るため、contextはダミーでよい
     const initWith = (optionsJson: string) => () => {
-      if (typeof rule !== "function") {
-        throw new TypeError("rule should be a reporter function");
-      }
-      rule(JSON.parse("{}"), JSON.parse(optionsJson));
+      rule.linter(JSON.parse("{}"), JSON.parse(optionsJson));
     };
 
     it("[negative] 不明なオプションキーを拒否する", () => {

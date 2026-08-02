@@ -4,7 +4,7 @@ import { TextlintKernel } from "@textlint/kernel";
 import markdown from "@textlint/textlint-plugin-markdown";
 import { type } from "arktype";
 
-import { createBlockQuoteDepth, maskValue, toMaskedStringSource, validateOptions } from "./index.ts";
+import { codePointAt, codePointBefore, createBlockQuoteDepth, isJapanese, maskValue, toMaskedStringSource, validateOptions } from "./index.ts";
 
 const kernel = new TextlintKernel();
 
@@ -48,6 +48,76 @@ describe("validateOptions", () => {
   it("[negative] オブジェクト以外はオブジェクト指定を促す", () => {
     expect(() => validateOptions(schema, "invalid")).toThrow("オプションが不正です。オブジェクトで指定してください。");
     expect(() => validateOptions(schema, 42)).toThrow("オブジェクトで指定してください");
+  });
+});
+
+describe("isJapanese", () => {
+  it("[positive] ひらがな・カタカナ・漢字を和字と判定する", () => {
+    expect(isJapanese("あ")).toBe(true);
+    expect(isJapanese("ア")).toBe(true);
+    expect(isJapanese("漢")).toBe(true);
+  });
+
+  it("[positive] 長音符と々を和字と判定する", () => {
+    expect(isJapanese("ー")).toBe(true);
+    expect(isJapanese("々")).toBe(true);
+  });
+
+  it("[positive] サロゲートペアの補助面漢字（CJK拡張B）を和字と判定する", () => {
+    expect(isJapanese("\u{20000}")).toBe(true);
+  });
+
+  it("[negative] 英数字・記号を和字と判定しない", () => {
+    expect(isJapanese("a")).toBe(false);
+    expect(isJapanese("1")).toBe(false);
+    expect(isJapanese(".")).toBe(false);
+  });
+
+  it("[negative] サロゲートペアの絵文字を和字と判定しない", () => {
+    expect(isJapanese("\u{1F600}")).toBe(false);
+  });
+
+  it("[negative] undefinedを和字と判定しない", () => {
+    expect(isJapanese(undefined)).toBe(false);
+  });
+});
+
+describe("codePointAt", () => {
+  it("[positive] BMP文字はそのまま1文字を返す", () => {
+    expect(codePointAt("あい", 0)).toBe("あ");
+    expect(codePointAt("あい", 1)).toBe("い");
+  });
+
+  it("[positive] indexがサロゲートペアの先頭のとき、ペア全体を1文字として返す", () => {
+    const text = `あ${"\u{20000}"}い`;
+    expect(codePointAt(text, 1)).toBe("\u{20000}");
+  });
+
+  it("[negative] 範囲外のindexはundefinedを返す", () => {
+    expect(codePointAt("あ", -1)).toBeUndefined();
+    expect(codePointAt("あ", 1)).toBeUndefined();
+  });
+});
+
+describe("codePointBefore", () => {
+  it("[positive] BMP文字はそのまま1文字を返す", () => {
+    expect(codePointBefore("あい", 1)).toBe("あ");
+    expect(codePointBefore("あい", 2)).toBe("い");
+  });
+
+  it("[positive] indexの直前がサロゲートペアの末尾のとき、ペア全体を1文字として返す", () => {
+    const text = `あ${"\u{20000}"}い`;
+    expect(codePointBefore(text, 3)).toBe("\u{20000}");
+  });
+
+  it("[negative] index0以下はundefinedを返す", () => {
+    expect(codePointBefore("あ", 0)).toBeUndefined();
+    expect(codePointBefore("あ", -1)).toBeUndefined();
+  });
+
+  it("[negative] 対をなす上位サロゲートがない下位サロゲート単体は結合せず1コードユニットで返す", () => {
+    const text = `a${"\uDC00"}`;
+    expect(codePointBefore(text, 2)).toBe("\uDC00");
   });
 });
 

@@ -10,14 +10,19 @@
 
 ## 収録ルール
 
-| ルール | 検出内容 | デフォルト |
-| --- | --- | --- |
-| [no-dash](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/tree/main/packages/no-dash) | 地の文・見出し・テーブルセルでのダッシュ（`—` `―` `–`）の使用 | 有効 |
-| [sentence-per-line](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/tree/main/packages/sentence-per-line) | 1行に複数の文が含まれている状態 | 有効 |
-| [no-arbitrary-line-break](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/tree/main/packages/no-arbitrary-line-break) | 許可された記号の直後以外での段落内の改行 | 有効 |
-| [no-doubled-additive-conjunction](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/tree/main/packages/no-doubled-additive-conjunction) | 同一段落内での累加の接続詞（さらに・また・加えて）の複数回使用 | 有効 |
+| ルール | 検出内容 | デフォルト | 自動修正 |
+| --- | --- | --- | --- |
+| [no-dash](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/tree/main/packages/no-dash) | 地の文・見出し・テーブルセルでのダッシュ（`—` `―` `–`）の使用 | 有効 | 非対応 |
+| [sentence-per-line](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/tree/main/packages/sentence-per-line) | 1行に複数の文が含まれている状態 | 有効 | 対応（`--fix`） |
+| [no-arbitrary-line-break](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/tree/main/packages/no-arbitrary-line-break) | 許可された記号の直後以外での段落内の改行 | 有効 | 対応（`--fix`） |
+| [no-doubled-additive-conjunction](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/tree/main/packages/no-doubled-additive-conjunction) | 同一段落内での累加の接続詞（さらに・また・加えて）の複数回使用 | 有効 | suggestionのみ（`--fix`では適用されない） |
 
 各ルールの検出条件・オプションの詳細はそれぞれのREADMEを参照してください。
+
+`sentence-per-line`のfixは文の境界ごとに改行を挿入し、`no-arbitrary-line-break`のfixは許可された区切りの直後以外の改行を取り除きます。
+両者は逆方向（挿入と除去）の操作ですが、既定値では競合しません。
+文の境界は「。」などの区切り記号で終わり、`no-arbitrary-line-break`の既定の`allowAfter`はその区切り記号を含むため、`sentence-per-line`が挿入する改行は`no-arbitrary-line-break`が既に許可する位置に収まります。
+`allowAfter`から文末の区切り記号を外した設定では、同一の`textlint --fix`の実行内で両者のfixが同じ改行に対して競合することがあります。
 
 ## インストール
 
