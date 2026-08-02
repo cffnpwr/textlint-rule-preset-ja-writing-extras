@@ -30,7 +30,7 @@ const splitParagraph = (node: TxtParagraphNode) => splitAST(node as unknown as P
 
 const rule: TextlintRuleModule<Options> = (context, options = {}) => {
   validateOptions(optionsSchema, options);
-  const { Syntax, RuleError, report, locator } = context;
+  const { Syntax, RuleError, report, locator, fixer, getSource } = context;
   const conjunctions = options.conjunctions ?? defaultConjunctions;
   const skipBlockQuote = options.skipBlockQuote ?? true;
   const blockQuote = createBlockQuoteDepth();
@@ -45,6 +45,8 @@ const rule: TextlintRuleModule<Options> = (context, options = {}) => {
         return;
       }
       const base = node.range[0];
+      // 報告範囲の終端補正とsuggestionの付与可否を、元テキストと直接照合して判定するために使う
+      const paragraphSource = getSource(node);
       const sentences = splitParagraph(node).children.filter(
         (child) => child.type === SentenceSplitterSyntax.Sentence,
       );
@@ -65,11 +67,12 @@ const rule: TextlintRuleModule<Options> = (context, options = {}) => {
           continue;
         }
         const sentenceOffset = sentence.range[0] - base;
-        found.push({
-          start: sentenceOffset + wordStart,
-          end: sentenceOffset + wordEnd,
-          word,
-        });
+        const start = sentenceOffset + wordStart;
+        // マスク後テキスト基準のoriginalIndexFromIndexは、接続詞と読点の間に
+        // マークアップが挟まる場合、接続詞の終端ではなく読点の位置を返してしまう。
+        // 元テキストで接続詞そのものが続くかを直接確認し、続く場合はその終端を使う
+        const end = paragraphSource.startsWith(word, start) ? start + word.length : sentenceOffset + wordEnd;
+        found.push({ start, end, word });
       }
       found.forEach(({ start, end, word }, index) => {
         if (index === 0) {
@@ -78,11 +81,28 @@ const rule: TextlintRuleModule<Options> = (context, options = {}) => {
         const previousWords = [...new Set(found.slice(0, index).map((occurrence) => occurrence.word))]
           .map((previousWord) => `「${previousWord}」`)
           .join("・");
+        // マスク後テキスト基準のoriginalIndexFromIndexは、読点の直後にマークアップが
+        // 挟まる場合に境界がずれるため使わない。元テキストの[start, end+1)が
+        // 「接続詞＋読点」そのものと一致するときだけsuggestionを付ける。
+        // 接続詞自体が強調等で囲まれている場合はマークアップの記号を含んでしまい
+        // 一致しないため、壊れた削除範囲を提示せずsuggestionを見送る
+        const isRemovableAsPlainText = paragraphSource.slice(start, end + 1) === `${word}、`;
         report(
           node,
           new RuleError(
             `累加の接続詞「${word}」が使われていますが、同じ段落内で既に${previousWords}が使われています。接続詞を削るか、文や段落の構成を見直してください。`,
-            { padding: locator.range([start, end]) },
+            {
+              padding: locator.range([start, end]),
+              suggestions: isRemovableAsPlainText
+                ? [
+                  {
+                    id: "remove-conjunction",
+                    message: `接続詞「${word}」と直後の読点を削除します。`,
+                    fix: fixer.removeRange([start, end + 1]),
+                  },
+                ]
+                : undefined,
+            },
           ),
         );
       });

@@ -38,6 +38,11 @@ When the total number of occurrences of the target words within a paragraph reac
 each occurrence from the second one onward is reported. The first use is not reported, as it is a
 legitimate usage.
 
+Each report includes a suggestion that removes the conjunction and the full-width comma 「、」
+immediately after it. The suggestion is not applied automatically by `textlint --fix`; it is only
+applied when the user selects it in an editor. This is because whether to remove the conjunction or
+to restructure the sentence or paragraph depends on context.
+
 The existing
 [textlint-rule-no-doubled-conjunction](https://github.com/textlint-ja/textlint-rule-no-doubled-conjunction)
 detects repetition of the same conjunction across adjacent sentences via morphological analysis, but
