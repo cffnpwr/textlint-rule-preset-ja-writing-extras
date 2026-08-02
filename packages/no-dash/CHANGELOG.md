@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.1.0](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/compare/textlint-rule-no-dash-v1.0.5...textlint-rule-no-dash-v1.1.0) (2026-08-02)
+
+
+### Features
+
+* :sparkles: 自動修正が可能なルールをtextlint --fixに対応させる ([#64](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/issues/64)) ([3b9c74d](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/commit/3b9c74dcabe452df0969249743187a891c0263df))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @cffnpwr/textlint-rule-preset-ja-writing-extras-shared bumped to 1.1.0
+
 ## [1.0.5](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/compare/textlint-rule-no-dash-v1.0.4...textlint-rule-no-dash-v1.0.5) (2026-07-12)
 
 
