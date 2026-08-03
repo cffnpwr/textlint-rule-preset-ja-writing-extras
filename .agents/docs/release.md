@@ -42,4 +42,4 @@
 
 publishの2ジョブは`id-token: write`を持つ。
 npmトークン等の長期シークレットは環境変数に置いていない。
-release-pleaseとGitHub Releaseの公開はGitHub Appトークン（`RELEASE_APP_ID`・`RELEASE_PRIVATE_KEY`）を使う。
+release-pleaseとGitHub Releaseの公開はGitHub Appトークン（リポジトリ変数`RELEASE_CLIENT_ID`・シークレット`RELEASE_PRIVATE_KEY`）を使う。
