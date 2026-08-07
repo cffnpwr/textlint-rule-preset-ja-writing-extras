@@ -33,7 +33,7 @@
     "arktype": "2.2.3"
   },
   "devDependencies": {
-    "@textlint/ast-node-types": "15.7.1",
+    "@textlint/ast-node-types": "15.8.0",
     "@textlint/types": "15.7.1"
   },
   "peerDependencies": {
