@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "@textlint/kernel": "15.7.1",
-    "@textlint/textlint-plugin-markdown": "15.7.1",
+    "@textlint/textlint-plugin-markdown": "15.8.0",
     "arktype": "2.2.3"
   },
   "publishConfig": {
