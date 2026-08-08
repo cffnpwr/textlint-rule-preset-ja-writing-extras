@@ -36,7 +36,7 @@
     "@cffnpwr/textlint-rule-sentence-per-line": "workspace:*"
   },
   "devDependencies": {
-    "@textlint/types": "15.7.1"
+    "@textlint/types": "15.8.0"
   },
   "inlinedDependencies": {
     "@textlint/ast-node-types": "15.7.1",
