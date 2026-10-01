@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/compare/textlint-rule-preset-ja-writing-extras-shared-v1.1.0...textlint-rule-preset-ja-writing-extras-shared-v1.1.1) (2026-10-01)
+
+
+### Bug Fixes
+
+* **deps:** :package: update dependency arktype to v2.2.5 ([#121](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/issues/121)) ([2bf9242](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/commit/2bf9242e9fb481f2a395bf7a1b763bb269e62b52))
+
 ## [1.1.0](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/compare/textlint-rule-preset-ja-writing-extras-shared-v1.0.5...textlint-rule-preset-ja-writing-extras-shared-v1.1.0) (2026-08-02)
 
 
