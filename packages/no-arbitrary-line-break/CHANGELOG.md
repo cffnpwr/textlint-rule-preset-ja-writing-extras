@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.1.1](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/compare/textlint-rule-no-arbitrary-line-break-v1.1.0...textlint-rule-no-arbitrary-line-break-v1.1.1) (2026-10-09)
+
+
+### Bug Fixes
+
+* **deps:** :package: update dependency arktype to v2.2.5 ([#121](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/issues/121)) ([2bf9242](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/commit/2bf9242e9fb481f2a395bf7a1b763bb269e62b52))
+* **deps:** :package: update dependency arktype to v2.2.7 ([#123](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/issues/123)) ([95fce1b](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/commit/95fce1bfa7e45baea7cee9ca2d24bdedc14bd9ac))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @cffnpwr/textlint-rule-preset-ja-writing-extras-shared bumped to 1.1.1
+
 ## [1.1.0](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/compare/textlint-rule-no-arbitrary-line-break-v1.0.5...textlint-rule-no-arbitrary-line-break-v1.1.0) (2026-08-02)
 
 
