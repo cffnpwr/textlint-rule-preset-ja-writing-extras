@@ -32,7 +32,7 @@
     "@cffnpwr/textlint-rule-preset-ja-writing-extras-shared": "workspace:*",
     "@textlint/regexp-string-matcher": "2.0.2",
     "arktype": "2.2.8",
-    "ts-pattern": "5.9.0"
+    "ts-pattern": "5.9.2"
   },
   "devDependencies": {
     "@textlint/ast-node-types": "15.8.0",
