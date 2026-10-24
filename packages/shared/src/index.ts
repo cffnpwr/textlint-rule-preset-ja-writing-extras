@@ -89,6 +89,43 @@ export const createNodeDepth = (): {
 // 汎用のcreateNodeDepthに別名を与えている
 export const createBlockQuoteDepth = createNodeDepth;
 
+// textから切り出す半開区間[start, end)。インデックスはUTF-16コードユニット単位
+export type TextRange = { start: number; end: number; };
+
+const cornerBracketOpen = "\u300C";
+const cornerBracketClose = "\u300D";
+
+// 「」の内側の範囲（括弧そのものは含まない）を、最も外側の対ごとに返す。
+// 閉じ括弧は直近の未対応の開き括弧と対応させ、入れ子は最も外側の対だけを残す。
+// 閉じ括弧が足りない開き括弧は引用として扱わない。引用の終端が分からないまま
+// 以降を除外すると、閉じ忘れ1つで後続の検出がすべて消えるため、対応が取れた対だけを範囲にする。
+// 開き括弧のない閉じ括弧は無視する。「」はBMP内のためコードユニット単位の走査でサロゲートペアを壊さない
+export const findCornerBracketRanges = (text: string): TextRange[] => {
+  const openIndexes: number[] = [];
+  const ranges: TextRange[] = [];
+  for (let i = 0; i < text.length; i += 1) {
+    if (text[i] === cornerBracketOpen) {
+      openIndexes.push(i);
+      continue;
+    }
+    if (text[i] !== cornerBracketClose) {
+      continue;
+    }
+    const open = openIndexes.pop();
+    if (open === undefined) {
+      continue;
+    }
+    // この対に内包される対は、より外側の対の範囲に含まれるため取り除く
+    while ((ranges.at(-1)?.start ?? -1) > open) {
+      ranges.pop();
+    }
+    if (i > open + 1) {
+      ranges.push({ start: open + 1, end: i });
+    }
+  }
+  return ranges;
+};
+
 // 本文テキスト化の際に同一長のダミー文字列へ置き換え、判定から隔離するノード型
 const maskedNodeTypes = new Set(["Code", "Html", "Image"]);
 

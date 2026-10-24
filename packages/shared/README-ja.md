@@ -18,6 +18,7 @@
 | `createNodeDepth()` | 任意のノード種別のネスト深さを管理し、そのノード配下かどうかを判定する |
 | `createBlockQuoteDepth()` | BlockQuoteのネスト深さを管理し、引用配下かどうかを判定する |
 | `toMaskedStringSource(node, extraMask?)` | インラインコード・HTML・画像を同一長のダミー文字へ置き換えた`StringSource`を返す |
+| `findCornerBracketRanges(text)` | かぎ括弧「」の内側の範囲（最も外側の対のみ。対応しない括弧は無視）を返す |
 | `maskValue(length)` | 指定長のダミー文字列を返す |
 
 ## ライセンス

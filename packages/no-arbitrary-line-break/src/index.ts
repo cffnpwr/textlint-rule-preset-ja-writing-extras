@@ -1,18 +1,20 @@
 import type { TextlintFixableRuleModule, TextlintRuleReporter } from "@textlint/types";
 
-import { codePointAt, codePointBefore, createBlockQuoteDepth, isJapanese, validateOptions } from "@cffnpwr/textlint-rule-preset-ja-writing-extras-shared";
+import { codePointAt, codePointBefore, createBlockQuoteDepth, findCornerBracketRanges, isJapanese, validateOptions } from "@cffnpwr/textlint-rule-preset-ja-writing-extras-shared";
 import { type } from "arktype";
 
 const optionsSchema = type({
   "+": "reject",
   "allowAfter?": "(string == 1)[]",
   "skipBlockQuote?": "boolean",
+  "skipCornerBracket?": "boolean",
   "severity?": "unknown",
 });
 
 export type Options = {
   allowAfter?: string[];
   skipBlockQuote?: boolean;
+  skipCornerBracket?: boolean;
 };
 
 // optionsSchema（実行時バリデータ）と公開型Optionsの同期をコンパイル時に保証する
@@ -69,6 +71,7 @@ const rule: TextlintRuleReporter<Options> = (context, options = {}) => {
   const allowAfterList = options.allowAfter ?? defaultAllowAfter;
   const allowAfter = new Set(allowAfterList);
   const skipBlockQuote = options.skipBlockQuote ?? true;
+  const skipCornerBracket = options.skipCornerBracket ?? false;
   const message = allowAfterList.length > 0
     ? `文の途中で改行しています。改行は${allowAfterList
       .map((char) => `「${char}」`)
@@ -90,11 +93,20 @@ const rule: TextlintRuleReporter<Options> = (context, options = {}) => {
         .filter((child) => child.type !== "Str" && child.type !== "Break")
         .map((child) => [child.range[0] - base, child.range[1] - base] as const);
       const isInInline = (index: number) => inlineRanges.some(([start, end]) => start <= index && index < end);
+      // インライン要素内の「」を括弧の対応に数えないよう、同じ長さのダミー文字へ置き換えた
+      // テキストで範囲を求める（インデックスをtextと一致させるため長さを変えない）
+      const cornerBracketRanges = skipCornerBracket
+        ? findCornerBracketRanges(inlineRanges.reduce(
+          (masked, [start, end]) => masked.slice(0, start) + "x".repeat(end - start) + masked.slice(end),
+          text,
+        ))
+        : [];
+      const isInCornerBracket = (index: number) => cornerBracketRanges.some((range) => range.start <= index && index < range.end);
       for (let i = 0; i < text.length; i += 1) {
         if (text[i] !== "\n") {
           continue;
         }
-        if (isInInline(i)) {
+        if (isInInline(i) || isInCornerBracket(i)) {
           continue;
         }
         let j = i - 1;

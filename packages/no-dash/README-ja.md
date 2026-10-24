@@ -29,6 +29,8 @@ enダッシュ（`–` U+2013）は、デフォルトでは両側が和字（ひ
 インラインコード・コードブロック・HTMLタグ・画像・オートリンク（`<https://…>`）のURLは、内部のダッシュを検出しません。これらは同じ長さのダミー文字に置き換えて判定するため、隣接するダッシュの和字判定では和字でない文字として扱われます（例: `カリー–`code`です。` の enダッシュは、直後がインラインコードのため検出されません）。
 `[表示テキスト](URL)`形式のリンクは、表示テキストを検出対象とし、URLは対象にしません。
 連続するダッシュ（`——`等）は1つのエラーとして報告します。
+`skipCornerBracket: true`を指定すると、かぎ括弧「」の内側のダッシュを検出しません。
+括弧の対応は同じ本文テキスト上で数えるため、インラインコード内の「」は数えません。
 
 ## インストール
 
@@ -113,6 +115,7 @@ interface Options {
   allows?: string[];
   dashes?: Partial<Record<"emDash" | "horizontalBar" | "enDash", DashContext>>;
   skipBlockQuote?: boolean;
+  skipCornerBracket?: boolean;
 }
 ```
 
@@ -121,6 +124,7 @@ interface Options {
 | `allows` | `[]` | 検出を除外する文字列・パターンのリスト。[regexp-string-matcher](https://github.com/textlint/regexp-string-matcher)形式で、`"/pattern/"`による正規表現指定も可能。マッチ範囲と重なる検出はスキップされる |
 | `dashes` | 下記 | 検出するダッシュと検出条件のマップ。指定した場合はデフォルト全体を上書きする（キー単位でマージしない） |
 | `skipBlockQuote` | `true` | 引用（BlockQuote）配下を検査対象から外す |
+| `skipCornerBracket` | `false` | かぎ括弧「」の内側を検査対象から外す。括弧そのものは検査する。入れ子は深さで対応させ、同じ段落内に対応する閉じ括弧がない開き括弧は除外範囲にしない |
 
 `dashes`のキーと対応する文字は次の通りです。
 

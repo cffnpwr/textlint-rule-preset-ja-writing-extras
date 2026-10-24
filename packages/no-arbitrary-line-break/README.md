@@ -30,6 +30,8 @@ preceding them is used to determine whether the break is allowed. Line breaks in
 after inline elements (links, emphasis, inline code, images, HTML elements) are not targeted.
 Wrapping immediately after `[リンク](url)` or `<br>` is not reported. Content under a quote
 (BlockQuote) is also excluded by default.
+With `skipCornerBracket: true`, line breaks inside corner brackets 「」 are not reported.
+「 and 」 inside inline elements such as inline code are not counted when matching brackets.
 
 Whereas [@cffnpwr/textlint-rule-sentence-per-line](../sentence-per-line) enforces "always break at
 the end of a sentence", this rule restricts "the positions where a line break is allowed within a
@@ -123,6 +125,7 @@ Add it to `.textlintrc.json`.
 interface Options {
   allowAfter?: string[];
   skipBlockQuote?: boolean;
+  skipCornerBracket?: boolean;
 }
 ```
 
@@ -130,6 +133,7 @@ interface Options {
 | --- | --- | --- |
 | `allowAfter` | `["、", "。", "！", "？", "」", "』", "）", "］", "】", ",", ".", "!", "?", ")", "]"]` | List of characters after which a line break is allowed. Each element is a single character consisting of one UTF-16 code unit (characters outside the BMP, such as emoji, cannot be specified). When specified, it overrides the default |
 | `skipBlockQuote` | `true` | Excludes content under quotes (BlockQuote) from inspection |
+| `skipCornerBracket` | `false` | Excludes the inside of corner brackets 「」 from inspection. The brackets themselves are still inspected. Nesting is matched by depth, and an opening bracket without a matching closing bracket in the same paragraph does not start an excluded range |
 
 Specifying an unknown option key or an invalid value (including an element of two or more characters
 in `allowAfter`) results in an error. Specifying an empty array for `allowAfter` causes every line

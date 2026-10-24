@@ -35,6 +35,8 @@ check for adjacent dashes they are treated as non-Japanese characters (for examp
 `カリー–`code`です。` is not detected because inline code immediately follows it).
 Links in the `[表示テキスト](URL)` form target the display text for detection, not the URL.
 Consecutive dashes (such as `——`) are reported as a single error.
+With `skipCornerBracket: true`, dashes inside corner brackets 「」 are not detected.
+The brackets are matched on the same body text, so 「 and 」 inside inline code are not counted.
 
 ## How to Install
 
@@ -119,6 +121,7 @@ interface Options {
   allows?: string[];
   dashes?: Partial<Record<"emDash" | "horizontalBar" | "enDash", DashContext>>;
   skipBlockQuote?: boolean;
+  skipCornerBracket?: boolean;
 }
 ```
 
@@ -127,6 +130,7 @@ interface Options {
 | `allows` | `[]` | A list of strings or patterns to exclude from detection. In the [regexp-string-matcher](https://github.com/textlint/regexp-string-matcher) format, regular expressions can also be specified via `"/pattern/"`. Detections overlapping a matched range are skipped |
 | `dashes` | see below | A map of dashes to detect and their detection conditions. When specified, it overrides the entire default (it is not merged per key) |
 | `skipBlockQuote` | `true` | Excludes content under quotes (BlockQuote) from inspection |
+| `skipCornerBracket` | `false` | Excludes the inside of corner brackets 「」 from inspection. The brackets themselves are still inspected. Nesting is matched by depth, and an opening bracket without a matching closing bracket in the same paragraph does not start an excluded range |
 
 The keys of `dashes` and their corresponding characters are as follows.
 

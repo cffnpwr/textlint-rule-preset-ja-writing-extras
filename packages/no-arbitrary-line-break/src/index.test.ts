@@ -231,6 +231,65 @@ describe("no-arbitrary-line-break", () => {
     });
   });
 
+  describe("skipCornerBracketを指定しないとき", () => {
+    const lint = lintWith();
+
+    it("[negative] 「」内の文の途中の改行を報告する", async () => {
+      const messages = await lint("彼は「これは\n引用です」と言った。");
+      expect(messages).toHaveLength(1);
+      expect(messages[0]?.range).toEqual([6, 7]);
+    });
+  });
+
+  describe("skipCornerBracketを有効にしたとき", () => {
+    const lint = lintWith({ skipCornerBracket: true });
+
+    it("[positive] 「」内の文の途中の改行を報告しない", async () => {
+      const messages = await lint("彼は「これは\n引用です」と言った。");
+      expect(messages).toHaveLength(0);
+    });
+
+    it("[negative] 同じ段落にある「」外の文の途中の改行を報告する", async () => {
+      const messages = await lint("彼は「これは\n引用です」と\n言った。");
+      expect(messages).toHaveLength(1);
+      expect(messages[0]?.range).toEqual([13, 14]);
+    });
+
+    it("[negative] 開き括弧の直前の改行を報告する", async () => {
+      const messages = await lint("彼は\n「引用です」と言った。");
+      expect(messages).toHaveLength(1);
+      expect(messages[0]?.range).toEqual([2, 3]);
+    });
+
+    it("[negative] 閉じていない「のとき、それ以降の改行も報告する", async () => {
+      const messages = await lint("彼は「これは\n引用です。");
+      expect(messages).toHaveLength(1);
+      expect(messages[0]?.range).toEqual([6, 7]);
+    });
+
+    it("[positive] 入れ子の「」内の改行を報告しない", async () => {
+      const messages = await lint("「外「内\n内」外\n外」");
+      expect(messages).toHaveLength(0);
+    });
+
+    it("[negative] 入れ子の途中で閉じが足りないとき、対応が取れた対の外側の改行を報告する", async () => {
+      const messages = await lint("「あ「い\nい」う\nえ");
+      expect(messages).toHaveLength(1);
+      expect(messages[0]?.range).toEqual([8, 9]);
+    });
+
+    it("[negative] インラインコード内の「を括弧に数えず、以降の改行を報告する", async () => {
+      const messages = await lint("`「`あ\nい");
+      expect(messages).toHaveLength(1);
+      expect(messages[0]?.range).toEqual([4, 5]);
+    });
+
+    it("[positive] fixは「」内の改行を書き換えず、「」外の改行だけ連結する", async () => {
+      const output = await fixWith({ skipCornerBracket: true })("彼は「これは\n引用です」と\n言った。");
+      expect(output).toBe("彼は「これは\n引用です」と言った。");
+    });
+  });
+
   describe("不正なオプションを指定したとき", () => {
     // .textlintrc由来の型付けされない入力を検査するため、JSON経由で不正な値を渡す。
     // バリデーションはcontextに触れる前に走るため、contextはダミーでよい
@@ -252,6 +311,10 @@ describe("no-arbitrary-line-break", () => {
 
     it("[negative] skipBlockQuoteの型を検証する", () => {
       expect(initWith("{\"skipBlockQuote\": 1}")).toThrow("「skipBlockQuote」");
+    });
+
+    it("[negative] skipCornerBracketの型を検証する", () => {
+      expect(initWith("{\"skipCornerBracket\": 1}")).toThrow("「skipCornerBracket」");
     });
 
     it("[negative] オブジェクト以外の値を拒否する", () => {
