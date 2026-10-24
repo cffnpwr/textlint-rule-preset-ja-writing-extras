@@ -132,7 +132,7 @@ jobs:
         run: bun run build
 
       - name: Wait for workspace dependencies
-        uses: ./.github/actions/wait-for-workspace-deps
+        uses: $/.github/actions/wait-for-workspace-deps
         with:
           working-directory: ${{ matrix.package.path }}
 
@@ -183,7 +183,7 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Wait for workspace dependencies
-        uses: ./.github/actions/wait-for-workspace-deps
+        uses: $/.github/actions/wait-for-workspace-deps
         with:
           working-directory: ${{ matrix.package.path }}
 
