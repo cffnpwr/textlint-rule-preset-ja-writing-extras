@@ -4,7 +4,7 @@ import { TextlintKernel } from "@textlint/kernel";
 import markdown from "@textlint/textlint-plugin-markdown";
 import { type } from "arktype";
 
-import { codePointAt, codePointBefore, createBlockQuoteDepth, createNodeDepth, isJapanese, maskValue, toMaskedStringSource, validateOptions } from "./index.ts";
+import { codePointAt, codePointBefore, createBlockQuoteDepth, createNodeDepth, findCornerBracketRanges, isJapanese, maskValue, toMaskedStringSource, validateOptions } from "./index.ts";
 
 const kernel = new TextlintKernel();
 
@@ -167,5 +167,53 @@ describe("toMaskedStringSource", () => {
       ? { ...node, value: maskValue(1) }
       : undefined));
     expect(source.toString()).toBe(`x${maskValue(4)}い`);
+  });
+});
+
+describe("findCornerBracketRanges", () => {
+  it("[positive] 単純な対の内側を返す", () => {
+    expect(findCornerBracketRanges("a「bc」d")).toEqual([{ start: 2, end: 4 }]);
+  });
+
+  it("[positive] 複数の対をそれぞれ返す", () => {
+    expect(findCornerBracketRanges("「a」b「cd」")).toEqual([{ start: 1, end: 2 }, { start: 5, end: 7 }]);
+  });
+
+  it("[positive] 同種の入れ子は最も外側の対だけを返す", () => {
+    expect(findCornerBracketRanges("「外「内」外」")).toEqual([{ start: 1, end: 6 }]);
+  });
+
+  it("[positive] 括弧を含まないテキストは空配列を返す", () => {
+    expect(findCornerBracketRanges("括弧なし")).toEqual([]);
+  });
+
+  it("[positive] 閉じ括弧のない開き括弧は範囲にしない", () => {
+    expect(findCornerBracketRanges("「abc")).toEqual([]);
+  });
+
+  it("[positive] 入れ子の途中で閉じが足りないときは対応が取れた対だけを返す", () => {
+    expect(findCornerBracketRanges("「a「b」c")).toEqual([{ start: 3, end: 4 }]);
+  });
+
+  it("[positive] 閉じ括弧のない開き括弧の後ろにある対は範囲にする", () => {
+    expect(findCornerBracketRanges("「a「b」c「d」")).toEqual([{ start: 3, end: 4 }, { start: 7, end: 8 }]);
+  });
+
+  it("[positive] 開き括弧のない閉じ括弧は無視する", () => {
+    expect(findCornerBracketRanges("a」b「c」")).toEqual([{ start: 4, end: 5 }]);
+  });
+
+  it("[positive] 空の「」は範囲にしない", () => {
+    expect(findCornerBracketRanges("a「」b")).toEqual([]);
+  });
+
+  it("[positive] 『』など他の括弧は対象にしない", () => {
+    expect(findCornerBracketRanges("『a』（b）")).toEqual([]);
+  });
+
+  it("[positive] サロゲートペアを含むテキストでもコードユニットの位置を返す", () => {
+    const text = "😀「😀a」😀";
+    expect(findCornerBracketRanges(text)).toEqual([{ start: 3, end: 6 }]);
+    expect(text.slice(3, 6)).toBe("😀a");
   });
 });

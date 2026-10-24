@@ -1,7 +1,7 @@
 import type { TxtHeaderNode, TxtParagraphNode, TxtTableCellNode } from "@textlint/ast-node-types";
 import type { TextlintRuleModule } from "@textlint/types";
 
-import { codePointAt, codePointBefore, createBlockQuoteDepth, isJapanese, maskValue, toMaskedStringSource, validateOptions } from "@cffnpwr/textlint-rule-preset-ja-writing-extras-shared";
+import { codePointAt, codePointBefore, createBlockQuoteDepth, findCornerBracketRanges, isJapanese, maskValue, toMaskedStringSource, validateOptions } from "@cffnpwr/textlint-rule-preset-ja-writing-extras-shared";
 import { matchPatterns } from "@textlint/regexp-string-matcher";
 import { type } from "arktype";
 import { match } from "ts-pattern";
@@ -24,6 +24,7 @@ const optionsSchema = type({
     "enDash?": dashContextSchema,
   },
   "skipBlockQuote?": "boolean",
+  "skipCornerBracket?": "boolean",
   "severity?": "unknown",
 });
 
@@ -35,6 +36,7 @@ export type Options = {
     enDash?: DashContext;
   };
   skipBlockQuote?: boolean;
+  skipCornerBracket?: boolean;
 };
 
 // arktypeスキーマ（実行時バリデータ）と公開型の同期をコンパイル時に保証する
@@ -88,6 +90,7 @@ const rule: TextlintRuleModule<Options> = (context, options = {}) => {
   const allows = options.allows ?? [];
   const dashes = options.dashes ?? defaultDashes;
   const skipBlockQuote = options.skipBlockQuote ?? true;
+  const skipCornerBracket = options.skipCornerBracket ?? false;
   const contextByChar = new Map<string, DashContext>();
   for (const kind of dashKinds) {
     const dashContext = dashes[kind];
@@ -108,11 +111,16 @@ const rule: TextlintRuleModule<Options> = (context, options = {}) => {
     }
     const source = toMaskedStringSource(node, maskAutolinkUrl);
     const text = source.toString();
+    // 括弧の対応はマスク後のテキストで数える。インラインコード内の「」を引用の括弧に数えないため
+    const cornerBracketRanges = skipCornerBracket ? findCornerBracketRanges(text) : [];
     const allowedRanges = allows.length > 0 ? matchPatterns(text, allows) : [];
     for (const dashMatch of text.matchAll(dashRunPattern)) {
       const start = dashMatch.index;
       const end = start + dashMatch[0].length;
       if (allowedRanges.some((range) => range.startIndex < end && start < range.endIndex)) {
+        continue;
+      }
+      if (cornerBracketRanges.some((range) => range.start <= start && start < range.end)) {
         continue;
       }
       const before = codePointBefore(text, start);

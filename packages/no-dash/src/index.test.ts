@@ -196,6 +196,78 @@ describe("no-dash", () => {
     });
   });
 
+  describe("skipCornerBracketを指定しないとき", () => {
+    const lint = lintWith();
+
+    it("[negative] 「」内のダッシュを検出する", async () => {
+      const messages = await lint("彼は「これ—です」と言った。");
+      expect(messages).toHaveLength(1);
+      expect(messages[0]?.range).toEqual([5, 6]);
+    });
+  });
+
+  describe("skipCornerBracketを有効にしたとき", () => {
+    const lint = lintWith({ skipCornerBracket: true });
+
+    it("[positive] 「」内のダッシュを検出しない", async () => {
+      const messages = await lint("彼は「これ—です」と言った。");
+      expect(messages).toHaveLength(0);
+    });
+
+    it("[negative] 同じ段落にある「」外のダッシュを検出する", async () => {
+      const messages = await lint("彼は「これ—です」と—言った。");
+      expect(messages).toHaveLength(1);
+      expect(messages[0]?.range).toEqual([10, 11]);
+    });
+
+    it("[negative] 括弧の直前と直後のダッシュを検出する", async () => {
+      const messages = await lint("あ—「い」—う");
+      expect(messages.map((message) => message.range)).toEqual([[1, 2], [5, 6]]);
+    });
+
+    it("[negative] 閉じていない「のとき、それ以降のダッシュも検出する", async () => {
+      const messages = await lint("彼は「これ—です。");
+      expect(messages).toHaveLength(1);
+      expect(messages[0]?.range).toEqual([5, 6]);
+    });
+
+    it("[positive] 入れ子の「」内のダッシュを検出しない", async () => {
+      const messages = await lint("「外「内—内」外—外」");
+      expect(messages).toHaveLength(0);
+    });
+
+    it("[negative] 入れ子の途中で閉じが足りないとき、対応が取れた対の外側を検出する", async () => {
+      const messages = await lint("「あ「い—い」う—え");
+      expect(messages.map((message) => message.range)).toEqual([[8, 9]]);
+    });
+
+    it("[positive] 見出し内の「」のダッシュを検出しない", async () => {
+      const messages = await lint("# 見出し「あ—い」");
+      expect(messages).toHaveLength(0);
+    });
+
+    it("[negative] 見出しの「」外のダッシュを検出する", async () => {
+      const messages = await lint("# 見出し—「あ」");
+      expect(messages).toHaveLength(1);
+    });
+
+    it("[positive] テーブルセル内の「」のダッシュを検出しない", async () => {
+      const messages = await lint("| a | b |\n| - | - |\n| 「あ—い」 | う |");
+      expect(messages).toHaveLength(0);
+    });
+
+    it("[negative] テーブルセルの「」外のダッシュを検出する", async () => {
+      const messages = await lint("| a | b |\n| - | - |\n| 「あ」—い | う |");
+      expect(messages).toHaveLength(1);
+    });
+
+    it("[negative] インラインコード内の「を括弧に数えず、以降のダッシュを検出する", async () => {
+      const messages = await lint("`「`あ—い");
+      expect(messages).toHaveLength(1);
+      expect(messages[0]?.range).toEqual([4, 5]);
+    });
+  });
+
   describe("不正なオプションを指定したとき", () => {
     // .textlintrc由来の型付けされない入力を検査するため、JSON経由で不正な値を渡す。
     // バリデーションはcontextに触れる前に走るため、contextはダミーでよい
@@ -220,6 +292,10 @@ describe("no-dash", () => {
 
     it("[negative] skipBlockQuoteの型を検証する", () => {
       expect(initWith("{\"skipBlockQuote\": \"yes\"}")).toThrow("「skipBlockQuote」");
+    });
+
+    it("[negative] skipCornerBracketの型を検証する", () => {
+      expect(initWith("{\"skipCornerBracket\": \"yes\"}")).toThrow("「skipCornerBracket」");
     });
 
     it("[negative] オブジェクト以外の値を拒否する", () => {

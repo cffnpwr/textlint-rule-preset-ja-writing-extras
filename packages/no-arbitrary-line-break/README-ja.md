@@ -26,6 +26,8 @@ markdownlintの`MD013`等の行長制限に合わせて文を折り返すとき�
 インライン要素（リンク・強調・インラインコード・画像・HTML要素）の内部と直後の改行は対象外です。
 `[リンク](url)`や`<br>`の直後で折り返しても報告されません。
 引用（BlockQuote）配下もデフォルトで対象外です。
+`skipCornerBracket: true`を指定すると、かぎ括弧「」の内側の改行を報告しません。
+インラインコードなどインライン要素内の「」は、括弧の対応に数えません。
 
 [@cffnpwr/textlint-rule-sentence-per-line](../sentence-per-line)が「文末では必ず改行する」を強制するのに対し、本ルールは「文中で改行してよい位置」を制限します。
 両方を有効にすると「改行は文末か区切り記号の直後のみ」という規律になります。
@@ -115,6 +117,7 @@ deno add --dev jsr:@cffnpwr/textlint-rule-no-arbitrary-line-break
 interface Options {
   allowAfter?: string[];
   skipBlockQuote?: boolean;
+  skipCornerBracket?: boolean;
 }
 ```
 
@@ -122,6 +125,7 @@ interface Options {
 | --- | --- | --- |
 | `allowAfter` | `["、", "。", "！", "？", "」", "』", "）", "］", "】", ",", ".", "!", "?", ")", "]"]` | 直後での改行を許可する文字のリスト。各要素はUTF-16コードユニット1個分の1文字（絵文字などBMP外の文字は指定できません）。指定した場合はデフォルトを上書きする |
 | `skipBlockQuote` | `true` | 引用（BlockQuote）配下を検査対象から外す |
+| `skipCornerBracket` | `false` | かぎ括弧「」の内側を検査対象から外す。括弧そのものは検査する。入れ子は深さで対応させ、同じ段落内に対応する閉じ括弧がない開き括弧は除外範囲にしない |
 
 不明なオプションキーや不正な値（`allowAfter`への2文字以上の要素を含む）を指定するとエラーになります。
 `allowAfter`に空配列を指定すると、段落内のすべての改行が報告されます。
