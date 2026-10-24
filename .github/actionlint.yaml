@@ -1,0 +1,7 @@
+# NOTE: usesのself-repository構文（$/）はactionlintが未対応で偽陽性になる。
+#       ref: <https://github.com/rhysd/actionlint/issues/711>
+# TODO: 対応が入ったら削除する。
+paths:
+  .github/workflows/release-please.yaml:
+    ignore:
+      - 'specifying action "\$/.+" in invalid format because ref is missing'
