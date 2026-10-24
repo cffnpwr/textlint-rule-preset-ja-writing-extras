@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.3.0](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/compare/textlint-rule-preset-ja-writing-extras-shared-v1.2.0...textlint-rule-preset-ja-writing-extras-shared-v1.3.0) (2026-10-24)
+
+
+### Features
+
+* add skipCornerBracket option to no-dash and no-arbitrary-line-break ([#143](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/issues/143)) ([0bacd04](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/commit/0bacd0422947e5177d3b263f948ddc5c380dfd77))
+
+
+### Bug Fixes
+
+* **deps:** :package: update dependency arktype to v2.2.9 ([#142](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/issues/142)) ([d6d7914](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/commit/d6d79147a35610879f514fc9d76ba24c7a296690))
+
 ## [1.2.0](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/compare/textlint-rule-preset-ja-writing-extras-shared-v1.1.0...textlint-rule-preset-ja-writing-extras-shared-v1.2.0) (2026-10-24)
 
 

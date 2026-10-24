@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.1.2](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/compare/textlint-rule-no-doubled-additive-conjunction-v1.1.1...textlint-rule-no-doubled-additive-conjunction-v1.1.2) (2026-10-24)
+
+
+### Bug Fixes
+
+* **deps:** :package: update dependency arktype to v2.2.9 ([#142](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/issues/142)) ([d6d7914](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/commit/d6d79147a35610879f514fc9d76ba24c7a296690))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @cffnpwr/textlint-rule-preset-ja-writing-extras-shared bumped to 1.3.0
+
 ## [1.1.1](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/compare/textlint-rule-no-doubled-additive-conjunction-v1.1.0...textlint-rule-no-doubled-additive-conjunction-v1.1.1) (2026-10-24)
 
 
