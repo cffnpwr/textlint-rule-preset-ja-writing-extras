@@ -1,18 +1,20 @@
 import type { TxtParagraphNode } from "@textlint/ast-node-types";
 import type { TextlintFixableRuleModule, TextlintRuleReporter } from "@textlint/types";
 
-import { createBlockQuoteDepth, validateOptions } from "@cffnpwr/textlint-rule-preset-ja-writing-extras-shared";
+import { createBlockQuoteDepth, createNodeDepth, validateOptions } from "@cffnpwr/textlint-rule-preset-ja-writing-extras-shared";
 import { type } from "arktype";
 import { SentenceSplitterSyntax, splitAST } from "sentence-splitter";
 
 const optionsSchema = type({
   "+": "reject",
   "skipBlockQuote?": "boolean",
+  "skipListItem?": "boolean",
   "severity?": "unknown",
 });
 
 export type Options = {
   skipBlockQuote?: boolean;
+  skipListItem?: boolean;
 };
 
 // optionsSchema（実行時バリデータ）と公開型Optionsの同期をコンパイル時に保証する
@@ -29,12 +31,19 @@ const reporter: TextlintRuleReporter<Options> = (context, options = {}) => {
   validateOptions(optionsSchema, options);
   const { Syntax, RuleError, report, getSource, locator, fixer } = context;
   const skipBlockQuote = options.skipBlockQuote ?? true;
+  const skipListItem = options.skipListItem ?? true;
   const blockQuote = createBlockQuoteDepth();
+  const listItem = createNodeDepth();
   return {
     [Syntax.BlockQuote]: blockQuote.enter,
     [Syntax.BlockQuoteExit]: blockQuote.exit,
+    [Syntax.ListItem]: listItem.enter,
+    [Syntax.ListItemExit]: listItem.exit,
     [Syntax.Paragraph](node) {
       if (skipBlockQuote && blockQuote.isInside()) {
+        return;
+      }
+      if (skipListItem && listItem.isInside()) {
         return;
       }
       const raw = getSource(node);

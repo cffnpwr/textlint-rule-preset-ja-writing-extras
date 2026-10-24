@@ -4,7 +4,7 @@ import { TextlintKernel } from "@textlint/kernel";
 import markdown from "@textlint/textlint-plugin-markdown";
 import { type } from "arktype";
 
-import { codePointAt, codePointBefore, createBlockQuoteDepth, isJapanese, maskValue, toMaskedStringSource, validateOptions } from "./index.ts";
+import { codePointAt, codePointBefore, createBlockQuoteDepth, createNodeDepth, isJapanese, maskValue, toMaskedStringSource, validateOptions } from "./index.ts";
 
 const kernel = new TextlintKernel();
 
@@ -121,15 +121,26 @@ describe("codePointBefore", () => {
   });
 });
 
-describe("createBlockQuoteDepth", () => {
+describe("createNodeDepth", () => {
   it("enter/exitでネスト深さを管理する", () => {
-    const depth = createBlockQuoteDepth();
+    const depth = createNodeDepth();
     expect(depth.isInside()).toBe(false);
     depth.enter();
     expect(depth.isInside()).toBe(true);
     depth.enter();
     expect(depth.isInside()).toBe(true);
     depth.exit();
+    expect(depth.isInside()).toBe(true);
+    depth.exit();
+    expect(depth.isInside()).toBe(false);
+  });
+});
+
+describe("createBlockQuoteDepth", () => {
+  it("createNodeDepthと同じ深さ管理を提供する", () => {
+    const depth = createBlockQuoteDepth();
+    expect(depth.isInside()).toBe(false);
+    depth.enter();
     expect(depth.isInside()).toBe(true);
     depth.exit();
     expect(depth.isInside()).toBe(false);

@@ -64,9 +64,11 @@ export const codePointBefore = (text: string, index: number): string | undefined
   return text[index - 1];
 };
 
-// BlockQuoteのネスト深さを管理する。ルールのハンドラにenter/exitを割り当て、
-// isInsideで引用配下かどうかを判定する
-export const createBlockQuoteDepth = (): {
+// 任意のノード種別のネスト深さを管理する。ルールのハンドラにenter/exitを割り当て、
+// isInsideでそのノードの配下かどうかを判定する。
+// ネストしたノード（引用の中の引用、リストの中のリスト）でも最外のexitまで配下と判定するため、
+// 真偽値ではなくカウンタで持つ
+export const createNodeDepth = (): {
   enter: () => void;
   exit: () => void;
   isInside: () => boolean;
@@ -82,6 +84,10 @@ export const createBlockQuoteDepth = (): {
     isInside: (): boolean => depth > 0,
   };
 };
+
+// BlockQuoteのネスト深さを管理する。既存の呼び出し側が引用配下の判定であることを名前で示せるよう、
+// 汎用のcreateNodeDepthに別名を与えている
+export const createBlockQuoteDepth = createNodeDepth;
 
 // 本文テキスト化の際に同一長のダミー文字列へ置き換え、判定から隔離するノード型
 const maskedNodeTypes = new Set(["Code", "Html", "Image"]);

@@ -15,6 +15,7 @@
 | 関数 | 用途 |
 | --- | --- |
 | `validateOptions(schema, options)` | arktypeスキーマでオプションを検証し、失敗時に日本語プレフィックス付きの`TypeError`を投げる |
+| `createNodeDepth()` | 任意のノード種別のネスト深さを管理し、そのノード配下かどうかを判定する |
 | `createBlockQuoteDepth()` | BlockQuoteのネスト深さを管理し、引用配下かどうかを判定する |
 | `toMaskedStringSource(node, extraMask?)` | インラインコード・HTML・画像を同一長のダミー文字へ置き換えた`StringSource`を返す |
 | `maskValue(length)` | 指定長のダミー文字列を返す |

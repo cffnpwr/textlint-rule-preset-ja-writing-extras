@@ -16,6 +16,7 @@ This package is published only for internal reuse within the preset. Standalone 
 | Function | Purpose |
 | --- | --- |
 | `validateOptions(schema, options)` | Validates options against an arktype schema and throws a `TypeError` with a Japanese-prefixed message on failure |
+| `createNodeDepth()` | Manages the nesting depth of an arbitrary node type and determines whether the position is under that node |
 | `createBlockQuoteDepth()` | Manages BlockQuote nesting depth and determines whether the position is under a quote |
 | `toMaskedStringSource(node, extraMask?)` | Returns a `StringSource` in which inline code, HTML, and images are replaced with dummy characters of the same length |
 | `maskValue(length)` | Returns a dummy string of the specified length |
