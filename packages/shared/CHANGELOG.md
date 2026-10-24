@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.2.0](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/compare/textlint-rule-preset-ja-writing-extras-shared-v1.1.0...textlint-rule-preset-ja-writing-extras-shared-v1.2.0) (2026-10-24)
+
+
+### Features
+
+* **sentence-per-line:** add skipListItem option to skip paragraphs inside list items ([#139](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/issues/139)) ([751f9c5](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/commit/751f9c59c43a2f15b21c93b8c2611f339cc5e3d9))
+
+
+### Bug Fixes
+
+* **deps:** :package: update dependency arktype to v2.2.5 ([#121](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/issues/121)) ([2bf9242](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/commit/2bf9242e9fb481f2a395bf7a1b763bb269e62b52))
+* **deps:** :package: update dependency arktype to v2.2.7 ([#123](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/issues/123)) ([95fce1b](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/commit/95fce1bfa7e45baea7cee9ca2d24bdedc14bd9ac))
+* **deps:** :package: update dependency arktype to v2.2.8 ([#127](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/issues/127)) ([6bddadf](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/commit/6bddadf1b4a9eb986302b8d5a7a5aa89cbc77de4))
+
 ## [1.1.0](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/compare/textlint-rule-preset-ja-writing-extras-shared-v1.0.5...textlint-rule-preset-ja-writing-extras-shared-v1.1.0) (2026-08-02)
 
 
