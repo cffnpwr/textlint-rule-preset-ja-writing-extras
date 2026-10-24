@@ -25,13 +25,13 @@ Sentence boundaries are determined by
 quotation marks or parentheses, or on the period in abbreviations such as `Node.js`. A single
 sentence wrapped across multiple lines at a comma or similar is not a violation.
 
-Only paragraphs are inspected. Text inside list items is included, while headings, inline code, and
-code blocks are excluded.
+Only paragraphs are inspected. Headings, inline code, and code blocks are excluded.
+Text inside list items and quotes is also excluded by default, and can be included with the `skipListItem` and `skipBlockQuote` options.
 
 When a line has two or more sentences, each sentence from the second onward is reported.
 
 This rule supports autofixing with `textlint --fix`. Each fix inserts a line break at the sentence
-boundary. Inside a list item, the continuation line is indented to match the item's own indentation,
+boundary. When `skipListItem` is `false`, the continuation line inside a list item is indented to match the item's own indentation,
 so the fix does not fall back on
 [lazy continuation](https://spec.commonmark.org/0.31.2/#list-items).
 
@@ -114,12 +114,14 @@ Add it to `.textlintrc.json`.
 ```ts
 interface Options {
   skipBlockQuote?: boolean;
+  skipListItem?: boolean;
 }
 ```
 
 | Option | Default | Description |
 | --- | --- | --- |
 | `skipBlockQuote` | `true` | Excludes content under quotes (BlockQuote) from inspection |
+| `skipListItem` | `true` | Excludes content under list items (ListItem), including nested lists, from inspection |
 
 Specifying an unknown option key or an invalid value results in an error.
 

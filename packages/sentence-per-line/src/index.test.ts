@@ -132,10 +132,9 @@ describe("sentence-per-line", () => {
       expect(messages[0]?.range).toEqual([10, 16]);
     });
 
-    it("[negative] リスト項目内の2文目を報告する", async () => {
+    it("[positive] リスト項目内は既定では検査しない", async () => {
       const messages = await lint("- 項目です。二文目です。");
-      expect(messages).toHaveLength(1);
-      expect(messages[0]?.range).toEqual([7, 13]);
+      expect(messages).toHaveLength(0);
     });
 
     it("[positive] CRLFで改行された文ごとの段落を許容する", async () => {
@@ -167,11 +166,9 @@ describe("sentence-per-line", () => {
       expect(output).toBe("一文目です。\n二文目です。");
     });
 
-    it("[negative] リスト項目内の段落を修正すると継続行に正規のインデントが付き、段落構造を保つ", async () => {
-      const input = "- 項目です。二文目です。";
-      const output = await fix(input);
-      expect(output).toBe("- 項目です。\n  二文目です。");
-      expect(await structureOf(output)).toEqual(await structureOf(input));
+    it("[positive] リスト項目内は既定では修正しない", async () => {
+      const output = await fix("- 項目です。二文目です。");
+      expect(output).toBe("- 項目です。二文目です。");
     });
 
     it("[positive] 既に一文一行になっている段落を変更しない", async () => {
@@ -206,6 +203,88 @@ describe("sentence-per-line", () => {
     });
   });
 
+  describe("skipListItemを明示的に有効にしたとき", () => {
+    const lint = lintWith({ skipListItem: true });
+
+    it("[positive] リスト項目内の2文目を検査しない", async () => {
+      const messages = await lint("- 項目です。二文目です。");
+      expect(messages).toHaveLength(0);
+    });
+
+    it("[positive] ネストしたリスト項目内を検査しない", async () => {
+      const messages = await lint("- 親です。\n  - 子です。二文目です。");
+      expect(messages).toHaveLength(0);
+    });
+
+    it("[positive] 順序付きリスト項目内を検査しない", async () => {
+      const messages = await lint("1. 項目です。二文目です。");
+      expect(messages).toHaveLength(0);
+    });
+
+    it("[positive] リスト項目内の引用の段落を検査しない", async () => {
+      const messages = await lint("- 項目です。\n\n  > 引用です。二文目です。");
+      expect(messages).toHaveLength(0);
+    });
+
+    it("[positive] skipBlockQuoteを無効にしても、リスト項目内の引用の段落を検査しない", async () => {
+      const messages = await lintWith({ skipListItem: true, skipBlockQuote: false })(
+        "- 項目です。\n\n  > 引用です。二文目です。",
+      );
+      expect(messages).toHaveLength(0);
+    });
+
+    it("[negative] リスト項目の外の段落は引き続き検査する", async () => {
+      const messages = await lint("- 項目です。\n\n段落です。二文目です。");
+      expect(messages).toHaveLength(1);
+      expect(messages[0]?.range).toEqual([14, 20]);
+    });
+
+    it("[negative] リスト項目の外の引用は、skipBlockQuoteを無効にすると検査する", async () => {
+      const messages = await lintWith({ skipListItem: true, skipBlockQuote: false })("> 引用です。二文目です。");
+      expect(messages).toHaveLength(1);
+    });
+  });
+
+  describe("skipListItemを無効にしたとき", () => {
+    const lint = lintWith({ skipListItem: false });
+    const fix = fixWith({ skipListItem: false });
+
+    it("[positive] 一文ごとのリスト項目を許容する", async () => {
+      const messages = await lint("- 項目です。\n- 次の項目です。");
+      expect(messages).toHaveLength(0);
+    });
+
+    it("[negative] リスト項目内の2文目を報告する", async () => {
+      const messages = await lint("- 項目です。二文目です。");
+      expect(messages).toHaveLength(1);
+      expect(messages[0]?.range).toEqual([7, 13]);
+    });
+
+    it("[negative] ネストしたリスト項目内の2文目を報告する", async () => {
+      const messages = await lint("- 親です。\n  - 子です。二文目です。");
+      expect(messages).toHaveLength(1);
+    });
+
+    it("[positive] skipBlockQuoteが有効なら、リスト項目内の引用の段落は検査しない", async () => {
+      const messages = await lint("- 項目です。\n\n  > 引用です。二文目です。");
+      expect(messages).toHaveLength(0);
+    });
+
+    it("[negative] skipBlockQuoteも無効なら、リスト項目内の引用の段落を報告する", async () => {
+      const messages = await lintWith({ skipListItem: false, skipBlockQuote: false })(
+        "- 項目です。\n\n  > 引用です。二文目です。",
+      );
+      expect(messages).toHaveLength(1);
+    });
+
+    it("[negative] リスト項目内の段落を修正すると継続行に正規のインデントが付き、段落構造を保つ", async () => {
+      const input = "- 項目です。二文目です。";
+      const output = await fix(input);
+      expect(output).toBe("- 項目です。\n  二文目です。");
+      expect(await structureOf(output)).toEqual(await structureOf(input));
+    });
+  });
+
   describe("不正なオプションを指定したとき", () => {
     // .textlintrc由来の型付けされない入力を検査するため、JSON経由で不正な値を渡す。
     // バリデーションはcontextに触れる前に走るため、contextはダミーでよい
@@ -219,6 +298,10 @@ describe("sentence-per-line", () => {
 
     it("[negative] skipBlockQuoteの型を検証する", () => {
       expect(initWith("{\"skipBlockQuote\": \"true\"}")).toThrow("「skipBlockQuote」");
+    });
+
+    it("[negative] skipListItemの型を検証する", () => {
+      expect(initWith("{\"skipListItem\": \"true\"}")).toThrow("「skipListItem」");
     });
 
     it("[negative] オブジェクト以外の値を拒否する", () => {

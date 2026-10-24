@@ -24,13 +24,14 @@
 かぎ括弧・括弧内の「。」や`Node.js`のような略語のピリオドでは分割しません。
 読点などで折り返した1つの文が複数行にまたがることは違反になりません。
 
-検査対象は段落のみで、リスト項目内のテキストは対象に含み、見出し、インラインコード、コードブロック内は対象外です。
+検査対象は段落のみで、見出し、インラインコード、コードブロック内は対象外です。
+リスト項目内と引用内のテキストも既定では対象外で、`skipListItem`・`skipBlockQuote`オプションで対象に含められます。
 
 1行に2文以上ある場合、2文目以降のそれぞれを報告します。
 
 このルールは`textlint --fix`による自動修正に対応しています。
 修正は文の境界に改行を挿入します。
-リスト項目内では、継続行のインデントを省いてもリスト項目の内容として扱われるCommonMark仕様の規定（[List Items](https://spec.commonmark.org/0.31.2/#list-items)）に頼らず、項目自体のインデントに合わせて継続行にインデントを付けます。
+`skipListItem`が`false`のとき、リスト項目内では、継続行のインデントを省いてもリスト項目の内容として扱われるCommonMark仕様の規定（[List Items](https://spec.commonmark.org/0.31.2/#list-items)）に頼らず、項目自体のインデントに合わせて継続行にインデントを付けます。
 
 ## インストール
 
@@ -111,12 +112,14 @@ deno add --dev jsr:@cffnpwr/textlint-rule-sentence-per-line
 ```ts
 interface Options {
   skipBlockQuote?: boolean;
+  skipListItem?: boolean;
 }
 ```
 
 | オプション | デフォルト | 説明 |
 | --- | --- | --- |
 | `skipBlockQuote` | `true` | 引用（BlockQuote）配下を検査対象から外す |
+| `skipListItem` | `true` | リスト項目（ListItem）配下をネストしたリストも含めて検査対象から外す |
 
 不明なオプションキーや不正な値を指定するとエラーになります。
 
