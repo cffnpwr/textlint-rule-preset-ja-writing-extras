@@ -34,7 +34,7 @@
     "sentence-splitter": "5.1.0"
   },
   "devDependencies": {
-    "@textlint/ast-node-types": "15.8.0",
+    "@textlint/ast-node-types": "16.1.1",
     "@textlint/types": "15.8.0"
   },
   "peerDependencies": {
