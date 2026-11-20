@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@cffnpwr/textlint-rule-preset-ja-writing-extras-shared": "workspace:*",
-    "@textlint/regexp-string-matcher": "2.0.3",
+    "@textlint/regexp-string-matcher": "2.0.4",
     "arktype": "2.2.9",
     "ts-pattern": "5.9.2"
   },
