@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.3](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/compare/textlint-rule-no-doubled-additive-conjunction-v1.1.2...textlint-rule-no-doubled-additive-conjunction-v1.1.3) (2026-11-21)
+
+
+### Bug Fixes
+
+* **deps:** :package: update dependency sentence-splitter to v5.0.3 ([#189](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/issues/189)) ([29c2b1d](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/commit/29c2b1d6ec238d85986294ec869c8b5fd6be2146))
+
 ## [1.1.2](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/compare/textlint-rule-no-doubled-additive-conjunction-v1.1.1...textlint-rule-no-doubled-additive-conjunction-v1.1.2) (2026-10-24)
 
 

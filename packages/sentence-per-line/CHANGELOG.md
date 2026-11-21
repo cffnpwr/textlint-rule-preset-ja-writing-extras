@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/compare/textlint-rule-sentence-per-line-v1.2.1...textlint-rule-sentence-per-line-v1.2.2) (2026-11-21)
+
+
+### Bug Fixes
+
+* **deps:** :package: update dependency sentence-splitter to v5.0.3 ([#189](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/issues/189)) ([29c2b1d](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/commit/29c2b1d6ec238d85986294ec869c8b5fd6be2146))
+
 ## [1.2.1](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/compare/textlint-rule-sentence-per-line-v1.2.0...textlint-rule-sentence-per-line-v1.2.1) (2026-10-24)
 
 

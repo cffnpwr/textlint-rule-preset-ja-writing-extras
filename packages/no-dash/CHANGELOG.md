@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.1](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/compare/textlint-rule-no-dash-v1.2.0...textlint-rule-no-dash-v1.2.1) (2026-11-21)
+
+
+### Bug Fixes
+
+* **deps:** :package: update dependency @textlint/regexp-string-matcher to v2.0.3 ([#188](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/issues/188)) ([2d7872c](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/commit/2d7872cc844fd3f60f39610d8cd8c7e408fae05b))
+* **deps:** :package: update dependency @textlint/regexp-string-matcher to v2.0.4 ([#193](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/issues/193)) ([fce9a17](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/commit/fce9a170ed474f8dff0f6aa1c1f327ed0d2dfe74))
+
 ## [1.2.0](https://github.com/cffnpwr/textlint-rule-preset-ja-writing-extras/compare/textlint-rule-no-dash-v1.1.1...textlint-rule-no-dash-v1.2.0) (2026-10-24)
 
 
