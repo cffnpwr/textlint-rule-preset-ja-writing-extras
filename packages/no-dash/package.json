@@ -31,7 +31,7 @@
   "dependencies": {
     "@cffnpwr/textlint-rule-preset-ja-writing-extras-shared": "workspace:*",
     "@textlint/regexp-string-matcher": "2.0.4",
-    "arktype": "2.2.9",
+    "arktype": "2.2.10",
     "ts-pattern": "5.9.2"
   },
   "devDependencies": {
